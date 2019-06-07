@@ -1,6 +1,7 @@
 all:
 	@$(MAKE) echoserver
 	@$(MAKE) echoservers
+	@$(MAKE) fwdserver
 
 echoserver:
 	@cd ./cmd/echoserver && $(MAKE) build && $(MAKE) image
@@ -11,6 +12,11 @@ echoservers:
 	@cd ./cmd/echoservers && $(MAKE) build && $(MAKE) image
 echoservers_publish: echoservers
 	@cd ./cmd/echoservers && $(MAKE) publish
+
+fwdserver:
+	@cd ./cmd/fwdserver && $(MAKE) build && $(MAKE) image
+fwdserver_publish: fwdserver
+	@cd ./cmd/fwdserver && $(MAKE) publish
 
 init:
 	@cd init && docker-compose up -d -V
