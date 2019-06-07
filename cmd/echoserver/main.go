@@ -15,6 +15,7 @@ import (
 
 	"go-demo/internal/echo"
 	"go-demo/internal/config"
+	"go-demo/internal/logger"
 
 	"github.com/gorilla/mux"
 )
@@ -26,8 +27,8 @@ func main() {
 	addr := serverConfig.GetAddr()
 	server := http.Server{
 		Addr:              addr,
-		Handler:           handler,
-		MaxHeaderBytes: 	1024,
+		Handler:           logger.ServerMiddleware(handler),
+		MaxHeaderBytes: 	 1024,
 		ReadHeaderTimeout: 15 * time.Second,
 		ReadTimeout:       15 * time.Second,
 		WriteTimeout:      10 * time.Second,

@@ -1,13 +1,8 @@
-APP_NAME=echoservers
-PATH_TO_CERT=../../assets/certs/server.crt
-PATH_TO_KEY=../../assets/keys/server.key
-PORT=11112
+APP_NAME=fwdserver
+PORT=11113
 
 run:
-	CERT=$(PATH_TO_CERT) \
-		KEY=$(PATH_TO_KEY) \
-		PORT=$(PORT) \
-		go run .
+	PORT=$(PORT) go run .
 
 build:
 	CGO_ENABLED=0 go build -a -ldflags "-extldflags '-static'" -o ../../build/bin/$(APP_NAME) .
@@ -21,13 +16,16 @@ image:
 
 testrun: image
 	## - - - - - - - - - - - - - - - 
-	## try this out with `curl -k https://localhost:11112`
+	## start the echoserver
+	## try this out with
+	## - `curl http://localhost:11113/echoserver1`
+	## - `curl http://localhost:11113/echoserver2`
 	## - - - - - - - - - - - - - - - 
 	docker run \
 		--network host \
+		--env ECHOSERVER1="http://localhost:11111" \
+		--env ECHOSERVER2="https://localhost:11112" \
 		--env PORT=$(PORT) \
-		-v "$$(pwd)/$(PATH_TO_CERT):/etc/ssl/server.crt" \
-		-v "$$(pwd)/$(PATH_TO_KEY):/etc/ssl/server.key" \
 		zephinzer/demo-$(APP_NAME):latest
 
 publish: build image

@@ -1,7 +1,8 @@
 APP_NAME=echoserver
+PORT=11111
 
 run:
-	go run .
+	PORT=$(PORT) go run .
 
 build:
 	CGO_ENABLED=0 go build -a -ldflags "-extldflags '-static'" -o ../../build/bin/$(APP_NAME) .
@@ -18,7 +19,8 @@ testrun: image
 	## try this out with `curl http://localhost:11111`
 	## - - - - - - - - - - - - - - - 
 	docker run \
-		-p 11111:11111 \
+		--network host \
+		--env PORT=$(PORT) \
 		zephinzer/demo-$(APP_NAME):latest
 
 publish: build image

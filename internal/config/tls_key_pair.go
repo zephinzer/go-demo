@@ -49,3 +49,12 @@ type TLSKeyPair struct {
 	CertPath string
 	KeyPath string
 }
+
+func (tlsKeyPair TLSKeyPair) Exists() bool {
+	certInfo, certErr := os.Lstat(tlsKeyPair.CertPath)
+	keyInfo, keyErr := os.Lstat(tlsKeyPair.KeyPath)
+	if certErr != nil || keyErr != nil {
+		return false
+	}
+	return !certInfo.IsDir() && !keyInfo.IsDir()
+}
