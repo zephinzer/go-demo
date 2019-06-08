@@ -3,6 +3,11 @@ all:
 	@$(MAKE) echoservers
 	@$(MAKE) fwdserver
 
+publish:
+	@$(MAKE) echoserver_publish
+	@$(MAKE) echoservers_publish
+	@$(MAKE) fwdserver_publish
+
 echoserver:
 	@$(MAKE) app APP=echoserver
 echoserver_publish: echoserver

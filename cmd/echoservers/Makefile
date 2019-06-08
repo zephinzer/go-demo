@@ -32,4 +32,6 @@ testrun: image
 
 publish: build image
 	docker push zephinzer/demo-$(APP_NAME):latest
+	docker tag zephinzer/demo-$(APP_NAME):latest zephinzer/demo-$(APP_NAME):$$(date +'%Y%m%d)
+	docker push zephinzer/demo-$(APP_NAME):$$(date +'%Y%m%d)
 	xdg-open https://hub.docker.com/r/zephinzer/demo-$(APP_NAME)
