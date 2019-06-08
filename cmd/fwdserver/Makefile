@@ -44,13 +44,11 @@ testruns: image
 	## - - - - - - - - - - - - - - - 
 	## start the echoserver
 	## try this out with
-	## - `curl http://localhost:11113/echoserver1`
-	## - `curl http://localhost:11113/echoserver2`
+	## - `curl http://localhost:11113/echoserver`
 	## - - - - - - - - - - - - - - - 
 	docker run \
 		--network host \
-		--env ECHOSERVER1="http://localhost:11111" \
-		--env ECHOSERVER2="https://localhost:11112" \
+		--env ECHOSERVER="http://localhost:11111" \
 		--env PORT=$(PORT) \
 		-v "$$(pwd)/$(PATH_TO_CERT):/etc/ssl/server.crt" \
 		-v "$$(pwd)/$(PATH_TO_KEY):/etc/ssl/server.key" \
@@ -58,6 +56,6 @@ testruns: image
 
 publish: build image
 	docker push zephinzer/demo-$(APP_NAME):latest
-	docker tag zephinzer/demo-$(APP_NAME):latest zephinzer/demo-$(APP_NAME):$$(date +'%Y%m%d)
-	docker push zephinzer/demo-$(APP_NAME):$$(date +'%Y%m%d)
+	docker tag zephinzer/demo-$(APP_NAME):latest zephinzer/demo-$(APP_NAME):$$(date +'%Y%m%d')
+	docker push zephinzer/demo-$(APP_NAME):$$(date +'%Y%m%d')
 	xdg-open https://hub.docker.com/r/zephinzer/demo-$(APP_NAME)

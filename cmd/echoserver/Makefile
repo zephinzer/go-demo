@@ -14,6 +14,7 @@ build:
 
 image:
 	docker build \
+		--build-arg DESCRIPTION="$$(cat ./README.md)" \
 		--build-arg BIN_NAME=$(APP_NAME) \
 		--file ../../deployments/Dockerfile \
 		--tag zephinzer/demo-$(APP_NAME):latest \
@@ -21,7 +22,16 @@ image:
 
 testrun: image
 	## - - - - - - - - - - - - - - - 
-	## try this out with `curl -k https://localhost:11112`
+	## try this out with `curl http://localhost:11111`
+	## - - - - - - - - - - - - - - - 
+	docker run \
+		--network host \
+		--env PORT=$(PORT) \
+		zephinzer/demo-$(APP_NAME):latest
+
+testruns: image
+	## - - - - - - - - - - - - - - - 
+	## try this out with `curl -k https://localhost:11111`
 	## - - - - - - - - - - - - - - - 
 	docker run \
 		--network host \
@@ -32,6 +42,6 @@ testrun: image
 
 publish: build image
 	docker push zephinzer/demo-$(APP_NAME):latest
-	docker tag zephinzer/demo-$(APP_NAME):latest zephinzer/demo-$(APP_NAME):$$(date +'%Y%m%d)
-	docker push zephinzer/demo-$(APP_NAME):$$(date +'%Y%m%d)
+	docker tag zephinzer/demo-$(APP_NAME):latest zephinzer/demo-$(APP_NAME):$$(date +'%Y%m%d')
+	docker push zephinzer/demo-$(APP_NAME):$$(date +'%Y%m%d')
 	xdg-open https://hub.docker.com/r/zephinzer/demo-$(APP_NAME)
