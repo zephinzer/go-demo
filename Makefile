@@ -6,6 +6,10 @@ publish:
 	@$(MAKE) echoserver_publish
 	@$(MAKE) fwdserver_publish
 
+showcase:
+	@cd ./deployments/showcase \
+		&& docker-compose up -V
+
 echoserver:
 	@$(MAKE) app APP=echoserver
 echoserver_publish: echoserver

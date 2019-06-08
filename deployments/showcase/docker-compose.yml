@@ -4,7 +4,7 @@ services:
     build:
       args:
         BIN_NAME: echoserver
-      context: ../build/bin
+      context: ../../build/bin
       dockerfile: ../../deployments/Dockerfile
     image: zephinzer/demo-echoserver:latest
     environment:
@@ -12,13 +12,13 @@ services:
     ports:
       - 11111:11111
     volumes:
-      - ../assets/certs/server.crt:/etc/ssl/server.crt:ro
-      - ../assets/keys/server.key:/etc/ssl/server.key:ro
+      - ../../assets/certs/server.crt:/etc/ssl/server.crt:ro
+      - ../../assets/keys/server.key:/etc/ssl/server.key:ro
   echoserver2:
     build:
       args:
         BIN_NAME: echoserver
-      context: ../build/bin
+      context: ../../build/bin
       dockerfile: ../../deployments/Dockerfile
     image: zephinzer/demo-echoserver:latest
     environment:
@@ -26,23 +26,23 @@ services:
     ports:
       - 11112:11111
     volumes:
-      - ../assets/certs/server.crt:/etc/ssl/server.crt:ro
-      - ../assets/keys/server.key:/etc/ssl/server.key:ro
+      - ../../assets/certs/server.crt:/etc/ssl/server.crt:ro
+      - ../../assets/keys/server.key:/etc/ssl/server.key:ro
   fwdserver:
     build:
       args:
         BIN_NAME: fwdserver
-      context: ../build/bin
+      context: ../../build/bin
       dockerfile: ../../deployments/Dockerfile
     image: zephinzer/demo-fwdserver:latest
     environment:
       NAME: "fwdserver"
       # access below with https://localhost:12111/echoserver1
-      ECHOSERVER1: http://echoserver1:11111
+      ECHOSERVER1: https://echoserver1:11111
       # access below with https://localhost:12111/echoserver2
-      ECHOSERVER2: http://echoserver2:11111
+      ECHOSERVER2: https://echoserver2:11111
     ports:
       - 12111:11111
     volumes:
-      - ../assets/certs/server.crt:/etc/ssl/server.crt:ro
-      - ../assets/keys/server.key:/etc/ssl/server.key:ro
+      - ../../assets/certs/server.crt:/etc/ssl/server.crt:ro
+      - ../../assets/keys/server.key:/etc/ssl/server.key:ro
