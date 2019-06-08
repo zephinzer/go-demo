@@ -29,7 +29,9 @@ services:
       dockerfile: ../../deployments/Dockerfile
     image: zephinzer/demo-fwdserver:latest
     environment:
+      # access below with https://localhost:11113/echoserver1
       ECHOSERVER1: http://echoserver:11111
+      # access below with https://localhost:11113/echoserver2
       ECHOSERVER2: https://echoservers:11111
     ports:
       - 11113:11111

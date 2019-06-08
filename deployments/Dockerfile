@@ -17,3 +17,11 @@ COPY --from=dev /etc/passwd /etc/passwd
 COPY --from=dev /app /app
 USER app
 ENTRYPOINT [ "/app" ]
+ARG BIN_NAME="app"
+ARG DESCRIPTION="[not set] a demo app written in go for code/service showcase purposes"
+LABEL maintainer="@zephinzer" \
+  description="${DESCRIPTION}" \
+  maintainer_url="https://github.com/zephinzer" \
+  repository_url="https://github.com/zephinzer/go-demo" \
+  container_url="https://hub.docker.com/r/zephinzer/demo-${BIN_NAME}" \
+  application_url="https://github.com/zephinzer/go-demo/tree/master/cmd/${BIN_NAME}"
