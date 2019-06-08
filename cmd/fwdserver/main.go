@@ -20,13 +20,21 @@ import (
 	"go-demo/internal/logger"
 
 	"github.com/gorilla/mux"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
 var nextHopConfig = viper.New()
 
 func init() {
+	pflag.Duration("auto-ping", 0, "when set together with NEXT_HOP_URL, sends a request to the next hop URL at the specified duration interval")
+	pflag.Parse()
+	nextHopConfig.BindPFlags(pflag.CommandLine)
+	nextHopConfig.SetDefault("next_hop_url", "")
 	nextHopConfig.AutomaticEnv()
+	if nextHopConfig.GetDuration("auto-ping") > 0 && nextHopConfig.GetString("next_hop_url") == "" {
+		log.Fatalln("flag:'--auto-ping' was set but envvar:'NEXT_HOP_URL' seems to be empty - fwdserver needs to know who to auto-ping!")
+	}
 }
 
 func main() {
@@ -36,6 +44,34 @@ func main() {
 	log.Printf("port: %v", serverConfig.Port)
 	log.Printf("cert: %s", tlsKeyPair.CertPath)
 	log.Printf("key:  %s", tlsKeyPair.KeyPath)
+	log.Printf("next_hop_url: %s", nextHopConfig.GetString("next_hop_url"))
+	log.Printf("auto-ping:    %v", nextHopConfig.GetDuration("auto-ping"))
+
+	if nextHopConfig.GetDuration("auto-ping") > 0 && nextHopConfig.GetString("next_hop_url") != "" {
+		nextHopUrl := nextHopConfig.GetString("next_hop_url")
+		go func(every <-chan time.Time) {
+			for {
+				select {
+				case <-every:
+					log.Printf("pinging %s...", nextHopUrl)
+					nextHop := &NextHop{
+						Key: "next_hop_url",
+						Body: "",
+						URL: nextHopConfig.GetString("next_hop_url"),
+						Method: "GET",
+						Path: "/",
+					}
+					nextHopRes, err := nextHop.Request()
+					if err != nil {
+						log.Println(err)
+					} else {
+						log.Println(nextHopRes)
+					}
+
+				}
+			}
+		}(time.Tick(nextHopConfig.GetDuration("auto-ping")))
+	}
 
 	handler := mux.NewRouter()
 	handler.Handle(`/{nextHop}`, getNextHopHandler())
@@ -75,12 +111,14 @@ func getNextHopHandler() http.Handler {
 		}
 	
 		// assign url iff nextHop.Key is valid
+		var nextHopURL string
 		if nextHop.Key != "" {
-			nextHopURL := nextHopConfig.GetString(nextHop.Key)
-			if nextHopURL == "" {
-				err = fmt.Errorf("no url found for key '%s'", nextHop.Key)
-				handleError(w, err, &nextHop)
-				return
+			if nextHopURL = nextHopConfig.GetString(nextHop.Key); nextHopURL == "" {
+				if nextHopURL = nextHopConfig.GetString("next_hop_url"); nextHopURL == "" {
+					err = fmt.Errorf("no url found for key '%s'", nextHop.Key)
+					handleError(w, err, &nextHop)
+					return
+				}
 			}
 			nextHop.URL = nextHopURL
 		}

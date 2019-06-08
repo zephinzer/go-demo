@@ -26,3 +26,6 @@ testrun: image
 publish: build image
 	docker push zephinzer/demo-$(APP_NAME):latest
 	xdg-open https://hub.docker.com/r/zephinzer/demo-$(APP_NAME)
+
+apply:
+	if minikube status ; then kubectl apply -f ./k8s.yaml; else echo 'no minikube instance was found running'; fi

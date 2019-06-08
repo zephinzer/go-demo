@@ -4,25 +4,38 @@ all:
 	@$(MAKE) fwdserver
 
 echoserver:
-	@cd ./cmd/echoserver && $(MAKE) build && $(MAKE) image
+	@$(MAKE) app APP=echoserver
 echoserver_publish: echoserver
-	@cd ./cmd/echoserver && $(MAKE) publish
+	@$(MAKE) app_publish APP=echoserver
 
 echoservers:
-	@cd ./cmd/echoservers && $(MAKE) build && $(MAKE) image
+	@$(MAKE) app APP=echoservers
 echoservers_publish: echoservers
-	@cd ./cmd/echoservers && $(MAKE) publish
+	@$(MAKE) app_publish APP=echoservers
 
 fwdserver:
-	@cd ./cmd/fwdserver && $(MAKE) build && $(MAKE) image
+	@$(MAKE) app APP=fwdserver
 fwdserver_publish: fwdserver
-	@cd ./cmd/fwdserver && $(MAKE) publish
+	@$(MAKE) app_publish APP=fwdserver
 
-init:
+########################
+# provisioning recipes #
+########################
+
+setup:
 	@cd init && docker-compose up -d -V
 
-denit:
+teardown:
 	@cd init && docker-compose down
+
+###################
+# utility recipes #
+###################
+
+app:
+	@cd ./cmd/${APP} && $(MAKE) build && $(MAKE) image
+app_publish:
+	@cd ./cmd/${APP} && $(MAKE) publish
 
 ssl:
 	@mkdir -p ./assets/keys
