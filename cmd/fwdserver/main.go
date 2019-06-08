@@ -158,6 +158,7 @@ func getNextHopHandler() http.Handler {
 		} else {
 			responseData = unmarshalledResponse
 		}
+		w.Header().Set("Content-Type", "application/json")
 		w.Write(Response{
 			Data: responseData,
 			NextHop: &nextHop,
@@ -167,6 +168,7 @@ func getNextHopHandler() http.Handler {
 
 func handleError(w http.ResponseWriter, err error, nextHop *NextHop) {
 	log.Println(err)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(Response{
 		Error: err.Error(),
 		NextHop: nextHop,
