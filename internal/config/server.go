@@ -18,16 +18,19 @@ import (
 
 func NewServer() Server {
 	config := viper.New()
+	config.SetDefault("name", "unnamed-server")
 	config.SetDefault("host", "0.0.0.0")
 	config.SetDefault("port", 11111)
 	config.AutomaticEnv()
 	return Server{
+		Name: config.GetString("name"),
 		Host: config.GetString("host"),
 		Port: uint16(config.GetInt("port")),
 	}
 }
 
 type Server struct {
+	Name string
 	Host string
 	Port uint16
 }

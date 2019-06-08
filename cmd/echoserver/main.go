@@ -29,10 +29,11 @@ func init() {
 	log = logger.New()
 	serverConfig = config.NewServer()
 	tlsKeyPairConfig = config.NewTLSKeyPair()
-	log.Infof("host         : %s", serverConfig.Host)
-	log.Infof("port         : %v", serverConfig.Port)
-	log.Infof("cert         : %s", tlsKeyPairConfig.CertPath)
-	log.Infof("key          : %s", tlsKeyPairConfig.KeyPath)
+	log.Infof("name: %s", serverConfig.Name)
+	log.Infof("host: %s", serverConfig.Host)
+	log.Infof("port: %v", serverConfig.Port)
+	log.Infof("cert: %s", tlsKeyPairConfig.CertPath)
+	log.Infof("key : %s", tlsKeyPairConfig.KeyPath)
 }
 
 func main() {
@@ -52,6 +53,7 @@ func getEchoHandler() http.Handler {
 			}
 		}
 		response := Response{
+			ServerName: serverConfig.Name,
 			ContentLength: r.ContentLength,
 			Headers: headers,
 			Host: r.Host,
@@ -64,10 +66,10 @@ func getEchoHandler() http.Handler {
 		}
 		responseBytes, err := json.Marshal(response)
 		if err != nil {
-			w.WriteHeader(500)
+			w.WriteHeader(http.StatusInternalServerError)
 			w.Write(NewErrorResponse(err.Error()))
 		}
-		w.WriteHeader(200)
+		w.WriteHeader(http.StatusOK)
 		w.Write(responseBytes)
 	})
 }

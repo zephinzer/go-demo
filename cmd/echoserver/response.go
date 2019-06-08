@@ -5,6 +5,7 @@ import (
 )
 
 type Response struct {
+	ServerName string `json:"serverName"`
 	ContentLength int64 `json:"contentLength"`
 	Headers map[string]string `json:"headers"`
 	Host string `json:"host"`
@@ -18,12 +19,14 @@ type Response struct {
 }
 
 type ErrorResponse struct {
+	ServerName string `json:"serverName"`
 	StatusCode uint `json:"statusCode"`
 	Message string `json:"message"`
 }
 
 func NewErrorResponse(message string) []byte {
 	errorResponse := ErrorResponse{
+		ServerName: serverConfig.Name,
 		StatusCode: 500,
 		Message: message,
 	}

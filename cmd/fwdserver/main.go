@@ -40,6 +40,7 @@ func init() {
 	if nextHopConfig.GetDuration("auto-ping") > 0 && nextHopConfig.GetString("next_hop_url") == "" {
 		log.Fatalln("flag:'--auto-ping' was set but envvar:'NEXT_HOP_URL' seems to be empty - fwdserver needs to know who to auto-ping!")
 	}
+	log.Printf("name         : %s", serverConfig.Name)
 	log.Printf("host         : %s", serverConfig.Host)
 	log.Printf("port         : %v", serverConfig.Port)
 	log.Printf("cert         : %s", tlsKeyPairConfig.CertPath)
@@ -121,6 +122,7 @@ func getNextHopHandler() http.Handler {
 			responseData = unmarshalledResponse
 		}
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		w.Write(Response{
 			Data: responseData,
 			NextHop: &nextHop,
@@ -131,6 +133,7 @@ func getNextHopHandler() http.Handler {
 func handleError(w http.ResponseWriter, err error, nextHop *NextHop) {
 	log.Println(err)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusInternalServerError)
 	w.Write(Response{
 		Error: err.Error(),
 		NextHop: nextHop,
