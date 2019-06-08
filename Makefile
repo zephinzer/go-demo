@@ -1,22 +1,15 @@
 all:
 	@$(MAKE) echoserver
-	@$(MAKE) echoservers
 	@$(MAKE) fwdserver
 
 publish:
 	@$(MAKE) echoserver_publish
-	@$(MAKE) echoservers_publish
 	@$(MAKE) fwdserver_publish
 
 echoserver:
 	@$(MAKE) app APP=echoserver
 echoserver_publish: echoserver
 	@$(MAKE) app_publish APP=echoserver
-
-echoservers:
-	@$(MAKE) app APP=echoservers
-echoservers_publish: echoservers
-	@$(MAKE) app_publish APP=echoservers
 
 fwdserver:
 	@$(MAKE) app APP=fwdserver

@@ -17,16 +17,21 @@ import (
 	"time"
 
 	"go-demo/internal/config"
-	"go-demo/internal/logger"
+	"go-demo/internal/server"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
-var nextHopConfig = viper.New()
+var serverConfig config.Server
+var tlsKeyPairConfig config.TLSKeyPair
+var nextHopConfig *viper.Viper
 
 func init() {
+	serverConfig = config.NewServer()
+	tlsKeyPairConfig = config.NewTLSKeyPair()
+	nextHopConfig = viper.New()
 	pflag.Duration("auto-ping", 0, "when set together with NEXT_HOP_URL, sends a request to the next hop URL at the specified duration interval")
 	pflag.Parse()
 	nextHopConfig.BindPFlags(pflag.CommandLine)
@@ -35,66 +40,23 @@ func init() {
 	if nextHopConfig.GetDuration("auto-ping") > 0 && nextHopConfig.GetString("next_hop_url") == "" {
 		log.Fatalln("flag:'--auto-ping' was set but envvar:'NEXT_HOP_URL' seems to be empty - fwdserver needs to know who to auto-ping!")
 	}
+	log.Printf("host         : %s", serverConfig.Host)
+	log.Printf("port         : %v", serverConfig.Port)
+	log.Printf("cert         : %s", tlsKeyPairConfig.CertPath)
+	log.Printf("key          : %s", tlsKeyPairConfig.KeyPath)
+	log.Printf("next_hop_url : %s", nextHopConfig.GetString("next_hop_url"))
+	log.Printf("auto-ping    : %v", nextHopConfig.GetDuration("auto-ping"))
 }
 
 func main() {
-	serverConfig := config.NewServer()
-	tlsKeyPair := config.NewTLSKeyPair()
-	log.Printf("host: %s", serverConfig.Host)
-	log.Printf("port: %v", serverConfig.Port)
-	log.Printf("cert: %s", tlsKeyPair.CertPath)
-	log.Printf("key:  %s", tlsKeyPair.KeyPath)
-	log.Printf("next_hop_url: %s", nextHopConfig.GetString("next_hop_url"))
-	log.Printf("auto-ping:    %v", nextHopConfig.GetDuration("auto-ping"))
-
 	if nextHopConfig.GetDuration("auto-ping") > 0 && nextHopConfig.GetString("next_hop_url") != "" {
-		nextHopUrl := nextHopConfig.GetString("next_hop_url")
-		go func(every <-chan time.Time) {
-			for {
-				select {
-				case <-every:
-					log.Printf("pinging %s...", nextHopUrl)
-					nextHop := &NextHop{
-						Key: "next_hop_url",
-						Body: "",
-						URL: nextHopConfig.GetString("next_hop_url"),
-						Method: "GET",
-						Path: "/",
-					}
-					nextHopRes, err := nextHop.Request()
-					if err != nil {
-						log.Println(err)
-					} else {
-						log.Println(nextHopRes)
-					}
-
-				}
-			}
-		}(time.Tick(nextHopConfig.GetDuration("auto-ping")))
+		go processAutoPing(time.Tick(nextHopConfig.GetDuration("auto-ping")))
 	}
-
 	handler := mux.NewRouter()
 	handler.Handle(`/{nextHop}`, getNextHopHandler())
 	handler.Handle(`/{nextHop}/{path:.+}`, getNextHopHandler())
-	addr := serverConfig.GetAddr()
-	server := http.Server{
-		Addr:              addr,
-		Handler:           logger.ServerMiddleware(handler),
-		MaxHeaderBytes:  	 1024,
-		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second,
-		WriteTimeout:      10 * time.Second,
-	}
-	var serverStartError error
-	if tlsKeyPair.Exists() {
-		log.Printf("starting pingserver at https://%s...", addr)
-		serverStartError = server.ListenAndServeTLS(tlsKeyPair.CertPath, tlsKeyPair.KeyPath)
-	} else {
-		log.Printf("starting pingserver at http://%s...", addr)
-		serverStartError = server.ListenAndServe()
-	}
-	if serverStartError != nil {
-		log.Panic(serverStartError)
+	if err := server.Start("fwdserver", server.New(handler)); err != nil {
+		panic(err)
 	}
 }
 
@@ -102,8 +64,8 @@ func getNextHopHandler() http.Handler {
 	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request) {
 		var err error
 		params := mux.Vars(r)
-		contentLength := r.Header.Get("content-length")
-		contentEncoding := r.Header.Get("content-encoding")
+		contentLength := r.Header.Get("Content-Length")
+		contentEncoding := r.Header.Get("Content-Encoding")
 		nextHop := NextHop{
 			Key: params["nextHop"],
 			Method: r.Method,
@@ -173,4 +135,25 @@ func handleError(w http.ResponseWriter, err error, nextHop *NextHop) {
 		Error: err.Error(),
 		NextHop: nextHop,
 	}.ToBytes())
+}
+
+func processAutoPing(every <-chan time.Time) {
+	for {
+		select {
+		case <-every:
+			nextHop := &NextHop{
+				Key: "next_hop_url",
+				Body: "",
+				URL: nextHopConfig.GetString("next_hop_url"),
+				Method: "GET",
+			}
+			log.Printf("processing auto-ping to '%s'...", nextHop.URL)
+			nextHopRes, err := nextHop.Request()
+			if err != nil {
+				log.Println(err)
+			} else {
+				log.Println(nextHopRes)
+			}
+		}
+	}
 }

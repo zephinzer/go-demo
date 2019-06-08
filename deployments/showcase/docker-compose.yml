@@ -9,15 +9,6 @@ services:
     image: zephinzer/demo-echoserver:latest
     ports:
       - 11111:11111
-  echoservers:
-    build:
-      args:
-        BIN_NAME: echoservers
-      context: ../build/bin
-      dockerfile: ../../deployments/Dockerfile
-    image: zephinzer/demo-echoservers:latest
-    ports:
-      - 11112:11111
     volumes:
       - ../assets/certs/server.crt:/etc/ssl/server.crt:ro
       - ../assets/keys/server.key:/etc/ssl/server.key:ro
@@ -29,12 +20,10 @@ services:
       dockerfile: ../../deployments/Dockerfile
     image: zephinzer/demo-fwdserver:latest
     environment:
-      # access below with https://localhost:11113/echoserver1
-      ECHOSERVER1: http://echoserver:11111
-      # access below with https://localhost:11113/echoserver2
-      ECHOSERVER2: https://echoservers:11111
+      # access below with https://localhost:11113/echoserver
+      ECHOSERVER: http://echoserver:11111
     ports:
-      - 11113:11111
+      - 11112:11111
     volumes:
       - ../assets/certs/server.crt:/etc/ssl/server.crt:ro
       - ../assets/keys/server.key:/etc/ssl/server.key:ro

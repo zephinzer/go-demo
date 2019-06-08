@@ -1,8 +1,13 @@
 APP_NAME=echoserver
-PORT=11111
+PATH_TO_CERT=../../assets/certs/server.crt
+PATH_TO_KEY=../../assets/keys/server.key
+PORT=11112
 
 run:
-	PORT=$(PORT) go run .
+	CERT=$(PATH_TO_CERT) \
+		KEY=$(PATH_TO_KEY) \
+		PORT=$(PORT) \
+		go run .
 
 build:
 	CGO_ENABLED=0 go build -a -ldflags "-extldflags '-static'" -o ../../build/bin/$(APP_NAME) .
@@ -16,11 +21,13 @@ image:
 
 testrun: image
 	## - - - - - - - - - - - - - - - 
-	## try this out with `curl http://localhost:11111`
+	## try this out with `curl -k https://localhost:11112`
 	## - - - - - - - - - - - - - - - 
 	docker run \
 		--network host \
 		--env PORT=$(PORT) \
+		-v "$$(pwd)/$(PATH_TO_CERT):/etc/ssl/server.crt" \
+		-v "$$(pwd)/$(PATH_TO_KEY):/etc/ssl/server.key" \
 		zephinzer/demo-$(APP_NAME):latest
 
 publish: build image
@@ -28,6 +35,3 @@ publish: build image
 	docker tag zephinzer/demo-$(APP_NAME):latest zephinzer/demo-$(APP_NAME):$$(date +'%Y%m%d)
 	docker push zephinzer/demo-$(APP_NAME):$$(date +'%Y%m%d)
 	xdg-open https://hub.docker.com/r/zephinzer/demo-$(APP_NAME)
-
-apply:
-	if minikube status ; then kubectl apply -f ./k8s.yaml; else echo 'no minikube instance was found running'; fi

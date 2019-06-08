@@ -1,0 +1,49 @@
+# deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fwdserver
+  namespace: go-demo
+spec:
+  selector:
+    matchLabels:
+      app: fwdserver
+      type: cmd
+  template:
+    metadata:
+      labels:
+        app: fwdserver
+        type: cmd
+    spec:
+      containers:
+      - name: fwdserver
+        image: zephinzer/demo-fwdserver:latest
+        environment:
+          - name: HOST
+            value: "0.0.0.0"
+          - name: PORT
+            value: "11111"
+        resources:
+          limits:
+            memory: "20Mi"
+            cpu: "20m"
+        ports:
+        - containerPort: 11111
+
+---
+
+# service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fwdserver
+  namespace: go-demo
+spec:
+  selector:
+    app: fwdserver
+    type: cmd
+  ports:
+  - port: 11112
+    targetPort: 11111

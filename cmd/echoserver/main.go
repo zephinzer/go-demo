@@ -9,33 +9,65 @@
 package main
 
 import (
-	"log"
 	"net/http"
+	"encoding/json"
 	"time"
 
-	"go-demo/internal/echo"
 	"go-demo/internal/config"
 	"go-demo/internal/logger"
+	"go-demo/internal/server"
 
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 )
 
+var serverConfig config.Server
+var tlsKeyPairConfig config.TLSKeyPair
+var log *logrus.Logger
+
+func init() {
+	log = logger.New()
+	serverConfig = config.NewServer()
+	tlsKeyPairConfig = config.NewTLSKeyPair()
+	log.Infof("host         : %s", serverConfig.Host)
+	log.Infof("port         : %v", serverConfig.Port)
+	log.Infof("cert         : %s", tlsKeyPairConfig.CertPath)
+	log.Infof("key          : %s", tlsKeyPairConfig.KeyPath)
+}
+
 func main() {
-	serverConfig := config.NewServer()
 	handler := mux.NewRouter()
-	handler.NotFoundHandler = echo.HandlerFunc
-	addr := serverConfig.GetAddr()
-	server := http.Server{
-		Addr:              addr,
-		Handler:           logger.ServerMiddleware(handler),
-		MaxHeaderBytes: 	 1024,
-		ReadHeaderTimeout: 15 * time.Second,
-		ReadTimeout:       15 * time.Second,
-		WriteTimeout:      10 * time.Second,
+	handler.NotFoundHandler = getEchoHandler()
+	if err := server.Start("echoserver", server.New(handler)); err != nil {
+		panic(err)
 	}
-	log.Printf("starting echoserver at http://%s...", addr)
-	err := server.ListenAndServe()
-	if err != nil {
-		log.Panic(err)
-	}
+}
+
+func getEchoHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		headers := make(map[string]string)
+		for name, values := range r.Header{
+			for _, value := range values {
+				headers[name] = value
+			}
+		}
+		response := Response{
+			ContentLength: r.ContentLength,
+			Headers: headers,
+			Host: r.Host,
+			Method: r.Method,
+			Protocol: r.Proto,
+			RemoteAddr: r.RemoteAddr,
+			RequestURI: r.RequestURI,
+			Timestamp: time.Now().Format(time.RFC3339),
+			TLSEnabled: r.TLS != nil,
+		}
+		responseBytes, err := json.Marshal(response)
+		if err != nil {
+			w.WriteHeader(500)
+			w.Write(NewErrorResponse(err.Error()))
+		}
+		w.WriteHeader(200)
+		w.Write(responseBytes)
+	})
 }
