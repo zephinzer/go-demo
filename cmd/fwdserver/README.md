@@ -49,6 +49,12 @@ curl http://localhost:1234/github
 | --- | --- | --- |
 | `--auto-ping` | `time.Duration` | When this is set, the `fwdserver` will issue a request to the URL stored in the environment variable `NEXT_HOP_URL`. If a `time.Duration` is not specified/invalid, a default of `5s` will be used. |
 
+# Endpoints
+
+| Endpoint | Description |
+| --- | --- |
+| `/{serviceKey}` | Proxies the request to the URL whose value is defined by the key `serviceKey`. See above section on [Environment Variables](#environment-variables) for more details. |
+
 # More
 
 See the [`./Makefile`](./Makefile) for other operations.

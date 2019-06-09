@@ -1,0 +1,19 @@
+sudo: required
+language: go
+go:
+  - "1.12.x"
+services:
+  - docker
+stages:
+  - build_and_publish
+git:
+  submodules: false
+  quiet: false
+jobs:
+  include:
+    - stage: build_and_publish
+      script:
+        - make all
+        - docker login docker.io -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
+        - make publish
+        - docker logout

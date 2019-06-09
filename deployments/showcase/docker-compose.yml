@@ -46,3 +46,17 @@ services:
     volumes:
       - ../../assets/certs/server.crt:/etc/ssl/server.crt:ro
       - ../../assets/keys/server.key:/etc/ssl/server.key:ro
+  healthcheck:
+    build:
+      args:
+        BIN_NAME: healhcheck
+      context: ../../build/bin
+      dockerfile: ../../deployments/Dockerfile
+    image: zephinzer/demo-healhcheck:latest
+    environment:
+      NAME: "healhcheck"
+    ports:
+      - 11114:11111
+    volumes:
+      - ../../assets/certs/server.crt:/etc/ssl/server.crt:ro
+      - ../../assets/keys/server.key:/etc/ssl/server.key:ro

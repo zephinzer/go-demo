@@ -1,14 +1,20 @@
 all:
 	@$(MAKE) echoserver
 	@$(MAKE) fwdserver
+	@$(MAKE) healthcheck
 
 publish:
 	@$(MAKE) echoserver_publish
 	@$(MAKE) fwdserver_publish
+	@$(MAKE) healthcheck_publish
 
 showcase:
 	@cd ./deployments/showcase \
 		&& docker-compose up -V
+
+showcase_d:
+	@cd ./deployments/showcase \
+		&& docker-compose up -d -V
 
 echoserver:
 	@$(MAKE) app APP=echoserver
@@ -19,6 +25,11 @@ fwdserver:
 	@$(MAKE) app APP=fwdserver
 fwdserver_publish: fwdserver
 	@$(MAKE) app_publish APP=fwdserver
+
+healthcheck:
+	@$(MAKE) app APP=healthcheck
+healthcheck_publish: healthcheck
+	@$(MAKE) app_publish APP=healthcheck
 
 ########################
 # provisioning recipes #
