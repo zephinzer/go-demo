@@ -9,6 +9,8 @@ stages:
 git:
   submodules: false
   quiet: false
+env:
+  - GO111MODULE=on
 jobs:
   include:
     - stage: build_and_publish
