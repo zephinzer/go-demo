@@ -6,7 +6,7 @@ RUN apk update --no-cache \
   && apk add ca-certificates --no-cache \
   && update-ca-certificates \
   && adduser -D -u 500 -H app
-COPY ./${BIN_NAME} /app
+COPY ./build/bin/${BIN_NAME} /app
 RUN chown app:app /app
 USER app
 ENTRYPOINT [ "/app" ]

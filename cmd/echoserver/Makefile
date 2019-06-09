@@ -18,7 +18,7 @@ image:
 		--build-arg BIN_NAME=$(APP_NAME) \
 		--file ../../deployments/Dockerfile \
 		--tag zephinzer/demo-$(APP_NAME):latest \
-		../../build/bin
+		../../
 
 testrun: image
 	## - - - - - - - - - - - - - - - 
