@@ -16,17 +16,17 @@ showcase_d:
 	@cd ./deployments/showcase \
 		&& docker-compose up -d -V
 
-echoserver:
+echoserver: dep
 	@$(MAKE) app APP=echoserver
 echoserver_publish: echoserver
 	@$(MAKE) app_publish APP=echoserver
 
-fwdserver:
+fwdserver: dep
 	@$(MAKE) app APP=fwdserver
 fwdserver_publish: fwdserver
 	@$(MAKE) app_publish APP=fwdserver
 
-healthcheck:
+healthcheck: dep
 	@$(MAKE) app APP=healthcheck
 healthcheck_publish: healthcheck
 	@$(MAKE) app_publish APP=healthcheck
@@ -34,6 +34,9 @@ healthcheck_publish: healthcheck
 ########################
 # provisioning recipes #
 ########################
+
+dep:
+	@go mod vendor
 
 setup:
 	@cd init && docker-compose up -d -V
