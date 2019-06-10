@@ -4,6 +4,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var log = New()
+
 var FieldMap = logrus.FieldMap{
 	logrus.FieldKeyFile: "@file",
 	logrus.FieldKeyFunc: "@func",

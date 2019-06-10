@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"log"
 	"net/http"
 )
 
@@ -11,7 +10,7 @@ func ServerMiddleware(next http.Handler) http.Handler {
 		if r.TLS != nil {
 			secure = "s"
 		}
-		log.Printf("@[%s] > %s %s http%s://%s%s", r.RemoteAddr, r.Proto, r.Method, secure, r.Host, r.RequestURI)
+		log.Tracef("@[%s] > %s %s http%s://%s%s", r.RemoteAddr, r.Proto, r.Method, secure, r.Host, r.RequestURI)
 		next.ServeHTTP(w, r)
 	})
 }

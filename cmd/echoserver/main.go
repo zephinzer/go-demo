@@ -9,8 +9,9 @@
 package main
 
 import (
-	"net/http"
 	"encoding/json"
+	"net/http"
+	"runtime"
 	"time"
 
 	"go-demo/internal/config"
@@ -39,6 +40,16 @@ func init() {
 func main() {
 	handler := mux.NewRouter()
 	handler.NotFoundHandler = getEchoHandler()
+	go func(every <-chan time.Time) {
+		for {
+			select {
+			case <-every:
+				var m runtime.MemStats
+        runtime.ReadMemStats(&m)
+				log.Infof("used: %.3f Mi (reserved: %.3f Mi)", float64(m.TotalAlloc) / 1024 / 1024, float64(m.Sys) / 1024 / 1024)
+			}
+		}
+	}(time.Tick(1 * time.Second))
 	if err := server.Start("echoserver", server.New(handler)); err != nil {
 		panic(err)
 	}

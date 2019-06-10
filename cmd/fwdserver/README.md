@@ -1,18 +1,25 @@
 > [Go-Demo](../../) > [Services](../) > `fwdserver`
 
+
 # `fwdserver`
+
 
 This is a server that forwards your requests to another server.
 
+
 # Usage
+
 
 Use `make run` from this directory to start the application.
 
 The Docker image is available at https://hub.docker.com/r/zephinzer/demo-fwdserver
 
+
 # Config
 
+
 ## Environment Variables
+
 
 | Environment Variable | Description |
 | --- | --- |
@@ -43,18 +50,24 @@ Accessing GitHub can be done via:
 curl http://localhost:1234/github
 ```
 
+
 ## Runtime Flags
+
 
 | Flag | Value | Description |
 | --- | --- | --- |
 | `--auto-ping` | `time.Duration` | When this is set, the `fwdserver` will issue a request to the URL stored in the environment variable `NEXT_HOP_URL`. If a `time.Duration` is not specified/invalid, a default of `5s` will be used. |
 
+
 # Endpoints
+
 
 | Endpoint | Description |
 | --- | --- |
 | `/{serviceKey}` | Proxies the request to the URL whose value is defined by the key `serviceKey`. See above section on [Environment Variables](#environment-variables) for more details. |
 
+
 # More
+
 
 See the [`./Makefile`](./Makefile) for other operations.
