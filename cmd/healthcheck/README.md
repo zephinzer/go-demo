@@ -14,6 +14,8 @@ Use `make run` from this directory to start the application.
 
 The Docker image is available at https://hub.docker.com/r/zephinzer/demo-healthcheck
 
+The GitHub repository is available at https://github.com/zephinzer/go-demo
+
 To deploy this onto a Kubernetes cluster, run `kubectl apply -f ./k8s.yaml`. To modify the envrionment variable, change the ConfigMap segment in the manifest and re-run the `kubectl apply`.
 
 

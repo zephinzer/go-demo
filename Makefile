@@ -2,11 +2,13 @@ all:
 	@$(MAKE) echoserver
 	@$(MAKE) fwdserver
 	@$(MAKE) healthcheck
+	@$(MAKE) traffic-generator
 
 publish:
 	@$(MAKE) echoserver_publish
 	@$(MAKE) fwdserver_publish
 	@$(MAKE) healthcheck_publish
+	@$(MAKE) traffic-generator_publish
 
 showcase:
 	@cd ./deployments/showcase \
@@ -30,6 +32,11 @@ healthcheck: dep
 	@$(MAKE) app APP=healthcheck
 healthcheck_publish: healthcheck
 	@$(MAKE) app_publish APP=healthcheck
+
+traffic-generator: dep
+	@$(MAKE) app APP=traffic-generator
+traffic-generator_publish: traffic-generator
+	@$(MAKE) app_publish APP=traffic-generator
 
 ########################
 # provisioning recipes #

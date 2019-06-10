@@ -14,6 +14,8 @@ Use `make run` from this directory to start the application.
 
 The Docker image is available at https://hub.docker.com/r/zephinzer/demo-fwdserver
 
+The GitHub repository is available at https://github.com/zephinzer/go-demo
+
 
 # Config
 

@@ -1,6 +1,8 @@
 # Go Demo
 A playground for Go and other things like container orchestration.
 
+[![Build Status](https://travis-ci.org/zephinzer/go-demo.svg?branch=master)](https://travis-ci.org/zephinzer/go-demo)
+
 # Main Usage
 
 ## Setting Up

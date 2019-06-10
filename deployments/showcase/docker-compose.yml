@@ -28,6 +28,20 @@ services:
     volumes:
       - ../../assets/certs/server.crt:/etc/ssl/server.crt:ro
       - ../../assets/keys/server.key:/etc/ssl/server.key:ro
+  echoserver3:
+    build:
+      args:
+        BIN_NAME: echoserver
+      context: ../../build/bin
+      dockerfile: ../../deployments/Dockerfile
+    image: zephinzer/demo-echoserver:latest
+    environment:
+      NAME: "echoserver3"
+    ports:
+      - 11113:11111
+    volumes:
+      - ../../assets/certs/server.crt:/etc/ssl/server.crt:ro
+      - ../../assets/keys/server.key:/etc/ssl/server.key:ro
   fwdserver:
     build:
       args:
@@ -56,7 +70,24 @@ services:
     environment:
       NAME: "healhcheck"
     ports:
-      - 11114:11111
+      - 13111:11111
     volumes:
       - ../../assets/certs/server.crt:/etc/ssl/server.crt:ro
       - ../../assets/keys/server.key:/etc/ssl/server.key:ro
+  traffic-generator:
+    build:
+      args:
+        BIN_NAME: traffic-generator
+      context: ../../build/bin
+      dockerfile: ../../deployments/Dockerfile
+    image: zephinzer/demo-traffic-generator:latest
+    environment:
+      NAME: "traffic-generator"
+      BODY: "{\"hello\":\"world\"}"
+      METHOD: "POST"
+      REQUEST_CONCURRENCY: 1
+      REQUEST_INTERVAL: 3s
+      REQUEST_RATE: 1
+      URL: "https://echoserver3:11111"
+    ports:
+      - 14111:11111
