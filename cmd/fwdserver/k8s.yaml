@@ -16,20 +16,33 @@ spec:
         app: fwdserver
         type: cmd
     spec:
+      replicas: 2
       containers:
-      - name: fwdserver
-        image: zephinzer/demo-fwdserver:latest
-        environment:
-          - name: HOST
-            value: "0.0.0.0"
-          - name: PORT
-            value: "11111"
-        resources:
-          limits:
-            memory: "20Mi"
-            cpu: "20m"
-        ports:
-        - containerPort: 11111
+        - name: fwdserver
+          image: zephinzer/demo-fwdserver:latest
+          envFrom:
+            - configMapRef:
+                name: fwdserver
+          resources:
+            limits:
+              memory: "20Mi"
+              cpu: "20m"
+          ports:
+            - containerPort: 11111
+
+---
+
+# configmap
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fwdserver
+  namespace: go-demo
+data:
+  ECHOSERVER1: http://echoserver:11111
+  HOST: 0.0.0.0
+  PORT: "11111"
 
 ---
 
