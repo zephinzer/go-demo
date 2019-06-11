@@ -11,7 +11,7 @@ publish:
 	@$(MAKE) traffic-generator_publish
 
 showcase:
-	@cd ./deployments/showcase \
+	@cd ./deployments/showcase/docker-compose \
 		&& docker-compose up -V
 
 showcase_d:

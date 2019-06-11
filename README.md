@@ -1,7 +1,13 @@
-# Go Demo
-A playground for Go and other things like container orchestration.
+# Demos
+A playground for container orchestration and cloud native applications.
 
 [![Build Status](https://travis-ci.org/zephinzer/go-demo.svg?branch=master)](https://travis-ci.org/zephinzer/go-demo)
+
+# Contents Of Interest
+
+- [**Demo Apps**](./cmd): Cloud native applications for use to demonstrate concepts, test out behaviours, generate logs, generate metrics *et cetera*
+- [**Deployments**](./deployments): Example deployments for Docker Compose/Kubernetes
+- [**Init**](./init): Application/service installations and setups
 
 # Main Usage
 
@@ -12,30 +18,6 @@ Run `make` to create all necessary binaries and Docker images.
 Run `make ssl` to create the required certificates/keys to support HTTPS.
 
 Run `make showcase` to create the Docker Compose setup.
-
-## Try It Out
-
-### `echoserver`
-
-Run `curl -k https://localhost:11111` to get a response from `echoserver1`
-
-Run `curl -k https://localhost:11112` to get a response from `echoserver1`
-
-### `fwdserver`
-
-Run `curl -k https://localhost:12111/echoserver1` to get a proxied response from `echoserver1`
-
-Run `curl -k https://localhost:12111/echoserver2` to get a proxied response from `echoserver2`
-
-### `healthcheck`
-
-Run `curl -k https://localhost:11114/liveness` to get a liveness check response from `healthcheck`
-
-Run `curl -k https://localhost:11114/liveness/false` to set the liveness check response from `healthcheck` to failing
-
-Run `curl -k https://localhost:11114/readiness` to get a readiness check response from `healthcheck`
-
-Run `curl -k https://localhost:11114/readiness/false` to set the readiness check response from `healthcheck` to failing
 
 # License
 Feel free to use these examples in your own workshops/tutorials!
