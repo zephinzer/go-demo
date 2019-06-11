@@ -8,7 +8,9 @@ play_stop:
 	@docker-compose down
 
 play_init:
-	@docker exec -it go_demo_init_vault vault operator init
+	@docker exec -it go_demo_init_vault vault operator init \
+		-key-shares=3 \
+		-key-threshold=2
 	# copy the Unseal Keys and Root Token and paste it somewhere!
 
 play_status:
