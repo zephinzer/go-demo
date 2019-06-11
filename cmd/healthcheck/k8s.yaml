@@ -12,18 +12,38 @@ spec:
     metadata:
       labels:
         app: healthcheck
-      type: cmd
+        type: cmd
     spec:
+      replicas: 3
       containers:
       - name: healthcheck
         image: zephinzer/demo-healthcheck:latest
         envFrom:
           - configMapRef:
               name: healthcheck
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 11114
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          # 10 seconds later...
+          failureThreshold: 5
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: 11114
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          # 10 seconds later...
+          failureThreshold: 5
         resources:
+          requests:
+            memory: 10Mi
+            cpu: 10m
           limits:
-            memory: "16Mi"
-            cpu: "16m"
+            memory: 16Mi
+            cpu: 16m
         ports:
         - containerPort: 11114
 
