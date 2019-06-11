@@ -9,7 +9,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: tiller
-  namespace: kube-system
+  namespace: tiller
 ---
 # the following Role+RoleBinding is for tiller to be able
 # to deploy in the `tiller` Namespace

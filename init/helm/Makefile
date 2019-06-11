@@ -131,6 +131,32 @@ _helm_secure_init:
 			--tiller-tls-key ./ssl/tiller.key.pem \
 			--tiller-tls-verify \
 			--tls-ca-cert ./ssl/ca.cert.pem; \
+		printf -- "see:\n  https://github.com/helm/helm/blob/master/docs/tiller_ssl.md#configuring-the-helm-client\nfor more information on using the helm client\n\n"; \
+		printf -- "(eg. use 'helm version --tiller-namespace=tiller --tls --tls-ca-cert ./ssl/ca.cert.pem --tls-key ./ssl/helm.key.pem --tls-cert ./ssl/helm.cert.pem' to run the version command)'; \
 	else \
 		printf -- "service account 'tiller' is not available - run 'kubectl apply -f ./resources/helm_namespace_access.yaml' first\n"; \
 	fi
+
+helm_copy_certs_to_helm_home:
+	-@if ! [ -f $(HOME)/.helm/ca.pem ]; then \
+			cp "./ssl/ca.cert.pem" $(HOME)/.helm/ca.pem; \
+	else \
+		if [ "$$(cat ./ssl/ca.cert.pem | shasum | cut -f 1 -d ' ')" !=  "$$(cat $(HOME)/.helm/ca.pem | shasum | cut -f 1 -d ' ')" ]; then \
+			printf -- "'~/.helm/ca.pem' already exists, refusing to overwrite.\n(check it's no longer used, delete it and try again)\n"; \
+		fi \
+	fi
+	-@if ! [ -f $(HOME)/.helm/cert.pem ]; then \
+		cp "./ssl/helm.cert.pem" $(HOME)/.helm/cert.pem; \
+	else \
+		if [ "$$(cat ./ssl/helm.cert.pem | shasum | cut -f 1 -d ' ')" != "$$(cat $(HOME)/.helm/cert.pem | shasum | cut -f 1 -d ' ')" ]; then \
+			printf -- "'~/.helm/cert.pem' already exists, refusing to overwrite.\n(check it's no longer used, delete it and try again)\n"; \
+		fi \
+	fi
+	-@if ! [ -f $(HOME)/.helm/key.pem ]; then \
+		cp "./ssl/helm.key.pem" $(HOME)/.helm/key.pem; \
+	else \
+		if [ "$$(cat ./ssl/helm.key.pem | shasum | cut -f 1 -d ' ')" != "$$(cat $(HOME)/.helm/key.pem | shasum | cut -f 1 -d ' ')" ]; then \
+			printf -- "'~/.helm/key.pem' already exists, refusing to overwrite.\n(check it's no longer used, delete it and try again)\n"; \
+		fi \
+	fi
+	-@printf -- "if correctly configured, you may use 'helm version --tiller-namespace=tiller --tls' to run the helm client successfully.\n"
