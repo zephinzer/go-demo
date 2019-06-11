@@ -16,20 +16,36 @@ spec:
         app: echoserver
         type: cmd
     spec:
+      replicas: 3
       containers:
       - name: echoserver
         image: zephinzer/demo-echoserver:latest
-        environment:
-          - name: HOST
-            value: "0.0.0.0"
-          - name: PORT
-            value: "11111"
+        envFrom:
+          - configMapRef:
+              name: echoserver
         resources:
+          requests:
+            memory: 10Mi
+            cpu: 5m
           limits:
-            memory: "10Mi"
-            cpu: "10m"
+            memory: 15Mi
+            cpu: 10m
         ports:
         - containerPort: 11111
+
+---
+
+# configmap
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: echoserver
+  namespace: go-demo
+data:
+  NAME: "echoserver"
+  HOST: 0.0.0.0
+  PORT: "11111"
 
 ---
 
