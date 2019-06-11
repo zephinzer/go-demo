@@ -31,10 +31,9 @@ install:
 		"/opt/linkerd/linkerd-$$(cat ./.version_latest)$(BIN_EXT)" \
 		"/usr/bin/linkerd$(BIN_EXT)"
 
-verify:
-	@linkerd version
-	@ls -al $$(which linkerd)
 check: verify
+verify:
+	@linkerd version && ls -al $$(which linkerd)
 
 k8s_pre_install_check:
 	@linkerd check --pre

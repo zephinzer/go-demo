@@ -1,0 +1,64 @@
+# create a Namespace called `tiller` for use by tiller
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tiller
+---
+# create a ServiceAccount which tiller will use
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tiller
+  namespace: kube-system
+---
+# the following Role+RoleBinding is for tiller to be able
+# to deploy in the `tiller` Namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tiller-in-tiller
+  namespace: tiller
+rules:
+  - apiGroups: ["", "batch", "extensions", "apps"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tiller-in-tiller
+  namespace: tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: tiller-in-tiller
+subjects:
+  - kind: ServiceAccount
+    name: tiller
+    namespace: kube-system
+---
+# the following Role+RoleBinding is for tiller to be able
+# to deploy in the `default` Namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tiller-in-default
+  namespace: default
+rules:
+  - apiGroups: ["", "batch", "extensions", "apps"]
+    resources: ["*"]
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tiller-in-default
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: tiller-in-default
+subjects:
+  - kind: ServiceAccount
+    name: tiller
+    namespace: kube-system
