@@ -1,0 +1,10 @@
+# shared configmap for `echoserver` instances
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: echoserver
+  namespace: go-demo
+data:
+  HOST: 0.0.0.0
+  PORT: "11111"
