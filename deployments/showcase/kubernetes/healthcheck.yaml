@@ -68,5 +68,6 @@ metadata:
   name: healthcheck
   namespace: go-demo
 data:
+  PORT: "11114"
   HEALTHY: "true"
   READY: "true"
