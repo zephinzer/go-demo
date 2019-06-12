@@ -1,0 +1,15 @@
+version: "3.5"
+services:
+  vault:
+    container_name: go_demo_init_vault_key_value
+    image: vault:1.1.3
+    entrypoint: [ "vault", "server", "-config", "/vault/config/config.hcl" ]
+    environment:
+      # required to avoid 'server gave HTTP response to HTTPS client' error
+      - VAULT_ADDR=http://127.0.0.1:8200
+    ports:
+      - 8200:8200
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - "./resources/config.hcl:/vault/config/config.hcl"
