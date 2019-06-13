@@ -1,5 +1,8 @@
 include ../Makefile
 
+# installs helm and tiller locally on the machine this recipe
+# is being run on
+# * intended for use on a fresh cluster
 tldr_install:
 	# get latest versions
 	@$(MAKE) version_info
@@ -10,9 +13,25 @@ tldr_install:
 	# install it to our path
 	@$(MAKE) install
 
+# installs a secured tiller on the default kubectl cluster
+# - for production use with a different ca, you should
+#		modify the helm_create_cert_authority step
+# * intended for use on a fresh cluster
+tldr_k8s:
+	@$(MAKE) helm_create_cert_authority
+	@$(MAKE) helm_create_user_keys
+	@$(MAKE) helm_create_user_csrs
+	@$(MAKE) helm_create_user_certs
+	@kubectl apply -f ./resources/helm_namespace_access.yaml
+	@$(MAKE) helm_secure_init_do
+	@$(MAKE) helm_copy_certs_to_helm_home
+
+##########
+# client #
+##########
+
 version_info:
 	@curl https://api.github.com/repos/helm/helm/releases > ./.version_info
-
 version_latest:
 	@cat ./.version_info | jq '.[].tag_name' -r | egrep "^v[0-9]+\.[0-9]+\.[0-9]+$$" | sort -V | tail -n 1 > ./.version_latest
 	@printf -- "latest version '$$(cat ./.version_latest)' stored in ./.version_latest\n"
@@ -71,14 +90,9 @@ verify:
 	-@helm version && ls -al $$(which helm)
 	-@tiller version && ls -al $$(which tiller)
 
-tldr_k8s:
-	@$(MAKE) helm_create_cert_authority
-	@$(MAKE) helm_create_user_keys
-	@$(MAKE) helm_create_user_csrs
-	@$(MAKE) helm_create_user_certs
-	@kubectl apply -f ./resources/helm_namespace_access.yaml
-	@$(MAKE) helm_secure_init_do
-	@$(MAKE) helm_copy_certs_to_helm_home
+#################
+# securing helm #
+#################
 
 # note: for production, use a propert root ca
 helm_create_cert_authority:
