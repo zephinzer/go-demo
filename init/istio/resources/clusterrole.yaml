@@ -1,0 +1,18 @@
+# this is a powerful user, destroy the role binding when not in use if you're paranoid about
+# tiller and what it can do - if you've set up helm using the `init/helm` content, having tls
+# would be fine too 
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: tiller
+  namespace: tiller
+  # note: this assumes you installed tiller into the tiller namespace, if you installed the tiller
+  #       service account into the kube-system namespace, change the namespace property to kube-system
