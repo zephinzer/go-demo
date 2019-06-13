@@ -6,6 +6,7 @@ metadata:
   name: traffic-generator
   namespace: go-demo
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: traffic-generator
@@ -16,7 +17,6 @@ spec:
         app: traffic-generator
         type: cmd
     spec:
-      replicas: 2
       containers:
       - name: traffic-generator
         image: zephinzer/demo-traffic-generator:latest

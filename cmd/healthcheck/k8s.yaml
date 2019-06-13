@@ -4,6 +4,7 @@ metadata:
   name: healthcheck
   namespace: go-demo
 spec:
+  replicas: 3
   selector:
     matchLabels:
       app: healthcheck
@@ -14,7 +15,6 @@ spec:
         app: healthcheck
         type: cmd
     spec:
-      replicas: 3
       containers:
       - name: healthcheck
         image: zephinzer/demo-healthcheck:latest
@@ -70,5 +70,6 @@ metadata:
   name: healthcheck
   namespace: go-demo
 data:
-  HEALTHY: "true"
+  PORT: "11114"
+  ALIVE: "true"
   READY: "true"

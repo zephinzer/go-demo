@@ -6,6 +6,7 @@ metadata:
   name: echoserver
   namespace: go-demo
 spec:
+  replicas: 3
   selector:
     matchLabels:
       app: echoserver
@@ -16,7 +17,6 @@ spec:
         app: echoserver
         type: cmd
     spec:
-      replicas: 3
       containers:
       - name: echoserver
         image: zephinzer/demo-echoserver:latest
