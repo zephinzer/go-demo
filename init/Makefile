@@ -1,10 +1,12 @@
 SYS_OS :=
+SYS_OS_TRUNC :=
 SYS_ARCH :=
 BINEXT :=
 
 ifeq ($(OS),Windows_NT)
 	# this is windows
 	SYS_OS = windows
+	SYS_OS_TRUNC = win
 
 	# get SYS_ARCH
 	ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)
@@ -22,10 +24,13 @@ else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Linux)
 		SYS_OS = linux
+		SYS_OS_TRUNC = linux
 	endif
 	ifeq ($(UNAME_S),Darwin)
 		SYS_OS = darwin
+		SYS_OS_TRUNC = osx
 	endif
+
 	# get SYS_ARCH
 	UNAME_P := $(shell uname -p)
 	ifeq ($(UNAME_P),x86_64)
@@ -40,6 +45,7 @@ else
 endif
 
 sys:
-	@printf -- "SYS_OS   : '$(SYS_OS)'\n"
-	@printf -- "SYS_ARCH : '$(SYS_ARCH)'\n"
-	@printf -- "BIN_EXT  : '$(BIN_EXT)'\n"
+	@printf -- "SYS_OS       : '$(SYS_OS)'\n"
+	@printf -- "SYS_OS_TRUNC : '$(SYS_OS_TRUNC)'\n"
+	@printf -- "SYS_ARCH     : '$(SYS_ARCH)'\n"
+	@printf -- "BIN_EXT      : '$(BIN_EXT)'\n"
