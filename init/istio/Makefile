@@ -86,6 +86,7 @@ k8s_purge_init:
 		--tiller-namespace=tiller \
 		--purge istio-init
 
+# ref: https://istio.io/docs/reference/config/installation-options/
 k8s_install_istio:
 	@printf -- 'NOTE: if you ran this immediately after running the istio-init, this may fail, wait for awhile and try again.\n'
 	@helm install ./bin/$$(cat ./.version_latest)/install/kubernetes/helm/istio \
@@ -96,6 +97,11 @@ k8s_install_istio:
 		--set global.proxy.resources.requests.cpu=50m \
 		--set global.proxy.resources.requests.memory=25Mi \
 		--set grafana.enabled=true \
+		--set kiali.enabled=true \
+		--set kiali.dashboard.usernameKey=username \
+		--set kiali.dashboard.passphraseKey=password \
+		--set kiali.dashboard.grafanaURL=http://localhost:3000 \
+		--set kiali.dashboard.jaegerURL=http://localhost:16686 \
 		--set mixer.telemetry.resources.limits.cpu=600m \
 		--set mixer.telemetry.resources.limits.memory=700G \
 		--set mixer.telemetry.resources.requests.cpu=300m \
