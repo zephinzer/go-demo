@@ -35,7 +35,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: tiller
-    namespace: kube-system
+    namespace: tiller
 ---
 # the following Role+RoleBinding is for tiller to be able
 # to deploy in the `default` Namespace
@@ -61,4 +61,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: tiller
-    namespace: kube-system
+    namespace: tiller

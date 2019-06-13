@@ -1,5 +1,15 @@
 include ../Makefile
 
+tldr_install:
+	# get latest versions
+	@$(MAKE) version_info
+	# get latest version
+	@$(MAKE) version_latest
+	# bring in the latest version
+	@$(MAKE) download
+	# install it to our path
+	@$(MAKE) install
+
 version_info:
 	@curl https://api.github.com/repos/helm/helm/releases > ./.version_info
 
@@ -60,6 +70,15 @@ check: verify
 verify:
 	-@helm version && ls -al $$(which helm)
 	-@tiller version && ls -al $$(which tiller)
+
+tldr_k8s:
+	@$(MAKE) helm_create_cert_authority
+	@$(MAKE) helm_create_user_keys
+	@$(MAKE) helm_create_user_csrs
+	@$(MAKE) helm_create_user_certs
+	@kubectl apply -f ./resources/helm_namespace_access.yaml
+	@$(MAKE) helm_secure_init_do
+	@$(MAKE) helm_copy_certs_to_helm_home
 
 # note: for production, use a propert root ca
 helm_create_cert_authority:
@@ -132,7 +151,7 @@ _helm_secure_init:
 			--tiller-tls-verify \
 			--tls-ca-cert ./ssl/ca.cert.pem; \
 		printf -- "see:\n  https://github.com/helm/helm/blob/master/docs/tiller_ssl.md#configuring-the-helm-client\nfor more information on using the helm client\n\n"; \
-		printf -- "(eg. use 'helm version --tiller-namespace=tiller --tls --tls-ca-cert ./ssl/ca.cert.pem --tls-key ./ssl/helm.key.pem --tls-cert ./ssl/helm.cert.pem' to run the version command)'; \
+		printf -- "(eg. use 'helm version --tiller-namespace=tiller --tls --tls-ca-cert ./ssl/ca.cert.pem --tls-key ./ssl/helm.key.pem --tls-cert ./ssl/helm.cert.pem' to run the version command)"; \
 	else \
 		printf -- "service account 'tiller' is not available - run 'kubectl apply -f ./resources/helm_namespace_access.yaml' first\n"; \
 	fi
@@ -159,4 +178,5 @@ helm_copy_certs_to_helm_home:
 			printf -- "'~/.helm/key.pem' already exists, refusing to overwrite.\n(check it's no longer used, delete it and try again)\n"; \
 		fi \
 	fi
-	-@printf -- "if correctly configured, you may use 'helm version --tiller-namespace=tiller --tls' to run the helm client successfully.\n"
+	-@printf -- "if correctly configured, the below command will not indicate any error has occurred:\n"
+	helm version --tiller-namespace=tiller --tls
