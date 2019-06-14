@@ -1,4 +1,4 @@
-version: "3.5"
+version: "3"
 services:
   echoserver1:
     build:
@@ -47,10 +47,15 @@ services:
     image: zephinzer/demo-fwdserver:latest
     environment:
       NAME: "fwdserver"
-      # access below with https://localhost:11211/echoserver1
+      # access below locally at:
+      # https://localhost:11211/echoserver1
       ECHOSERVER1: https://echoserver1:11111
-      # access below with https://localhost:11211/echoserver2
+      # access below locally at:
+      # https://localhost:11211/echoserver2
       ECHOSERVER2: https://echoserver2:11111
+      # access below locally at:
+      # https://localhost:11211/echoserver3
+      ECHOSERVER3: https://echoserver3:11111
     ports:
       - 11211:11111
     volumes:
@@ -69,7 +74,7 @@ services:
     volumes:
       - ../../../assets/certs/server.crt:/etc/ssl/server.crt:ro
       - ../../../assets/keys/server.key:/etc/ssl/server.key:ro
-  traffic-generator:
+  traffic-generator1:
     build:
       args:
         BIN_NAME: traffic-generator
@@ -82,6 +87,32 @@ services:
       REQUEST_CONCURRENCY: 1
       REQUEST_INTERVAL: 3s
       REQUEST_RATE: 1
-      URL: "https://echoserver3:11111"
-    ports:
-      - 11411:11111
+      URL: "https://fwdserver:11111/echoserver1"
+  traffic-generator2:
+    build:
+      args:
+        BIN_NAME: traffic-generator
+      context: ../../../tools
+    image: zephinzer/demo-traffic-generator:latest
+    environment:
+      NAME: "traffic-generator"
+      BODY: "{\"hello\":\"world\"}"
+      METHOD: "POST"
+      REQUEST_CONCURRENCY: 1
+      REQUEST_INTERVAL: 3s
+      REQUEST_RATE: 1
+      URL: "https://fwdserver:11111/echoserver2"
+  traffic-generator3:
+    build:
+      args:
+        BIN_NAME: traffic-generator
+      context: ../../../tools
+    image: zephinzer/demo-traffic-generator:latest
+    environment:
+      NAME: "traffic-generator"
+      BODY: "{\"hello\":\"world\"}"
+      METHOD: "POST"
+      REQUEST_CONCURRENCY: 1
+      REQUEST_INTERVAL: 3s
+      REQUEST_RATE: 1
+      URL: "https://fwdserver:11111/echoserver3"
