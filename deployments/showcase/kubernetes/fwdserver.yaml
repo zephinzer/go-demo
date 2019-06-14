@@ -6,7 +6,7 @@ metadata:
   name: fwdserver
   namespace: go-demo
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: fwdserver
@@ -27,6 +27,9 @@ spec:
             limits:
               memory: 20Mi
               cpu: 20m
+            requests:
+              memory: 15Mi
+              cpu: 15m
           ports:
             - containerPort: 11111
 

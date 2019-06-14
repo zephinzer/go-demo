@@ -66,6 +66,8 @@ install:
 # on kubernetes #
 #################
 
+HELM_OPT := --tls --tiller-namespace=tiller
+
 k8s_preinstall:
 	@kubectl apply -f ./resources/namespace.yaml
 	@kubectl apply -f ./resources/clusterrole.yaml
@@ -75,51 +77,25 @@ k8s_postpurge:
 	-@kubectl delete -f ./resources/namespace.yaml
 
 k8s_install_init:
-	@helm install ./bin/$$(cat ./.version_latest)/install/kubernetes/helm/istio-init \
-		--tls \
-		--tiller-namespace=tiller \
+	@helm install ./bin/$$(cat ./.version_latest)/install/kubernetes/helm/istio-init $(HELM_OPT) \
 		--name istio-init \
 		--namespace istio-system
 k8s_purge_init:
-	-@helm delete \
-		--tls \
-		--tiller-namespace=tiller \
+	-@helm delete $(HELM_OPT) \
 		--purge istio-init
 
-# ref: https://istio.io/docs/reference/config/installation-options/
 k8s_install_istio:
 	@printf -- 'NOTE: if you ran this immediately after running the istio-init, this may fail, wait for awhile and try again.\n'
-	@helm install ./bin/$$(cat ./.version_latest)/install/kubernetes/helm/istio \
-		--tls \
-		--tiller-namespace=tiller \
-		--set global.proxy.resources.limits.cpu=100m \
-		--set global.proxy.resources.limits.memory=50Mi \
-		--set global.proxy.resources.requests.cpu=50m \
-		--set global.proxy.resources.requests.memory=25Mi \
-		--set grafana.enabled=true \
-		--set kiali.enabled=true \
-		--set kiali.dashboard.secretName=kiali \
-		--set kiali.dashboard.usernameKey=username \
-		--set kiali.dashboard.passphraseKey=password \
-		--set kiali.dashboard.grafanaURL=http://localhost:3000 \
-		--set kiali.dashboard.jaegerURL=http://localhost:16686 \
-		--set mixer.telemetry.resources.limits.cpu=600m \
-		--set mixer.telemetry.resources.limits.memory=700G \
-		--set mixer.telemetry.resources.requests.cpu=300m \
-		--set mixer.telemetry.resources.requests.memory=500Mi \
-		--set pilot.resources.requests.cpu=200m \
-		--set pilot.resources.requests.memory=500Mi \
-		--set tracing.enabled=true \
-		--set tracing.zipkin.resources.limits.cpu=150m \
-		--set tracing.zipkin.resources.limits.memory=500Mi \
-		--set tracing.zipkin.resources.requests.cpu=100m \
-		--set tracing.zipkin.resources.requests.memory=250Mi \
+	@helm install ./bin/$$(cat ./.version_latest)/install/kubernetes/helm/istio $(HELM_OPT) \
+		-f ./resources/values.yaml \
 		--name istio \
 		--namespace istio-system
+k8s_update_istio:
+	@helm upgrade $(HELM_OPT) \
+		-f ./resources/values.yaml \
+		istio ./bin/$$(cat ./.version_latest)/install/kubernetes/helm/istio
 k8s_purge_istio:
-	-@helm delete \
-		--tls \
-		--tiller-namespace=tiller \
+	-@helm delete $(HELM_OPT) \
 		--purge istio
 
 k8s_check:
@@ -131,6 +107,9 @@ k8s_grafana:
 
 k8s_jaegar:
 	@kubectl port-forward -n istio-system $$(kubectl get pods -n istio-system | grep tracing | cut -f 1 -d ' ') $$(kubectl describe service -n istio-system jaeger-query | grep TargetPort | cut -f 2- -d ' ' | sed -e 's| ||g' | cut -f 1 -d '/'):$$(kubectl describe service -n istio-system jaeger-query | grep TargetPort | cut -f 2- -d ' ' | sed -e 's| ||g' | cut -f 1 -d '/')
+
+k8s_kiali:
+	@kubectl port-forward -n istio-system $$(kubectl get pods -n istio-system | grep kiali | cut -f 1 -d ' ') $$(kubectl describe service -n istio-system kiali | grep TargetPort | cut -f 2- -d ' ' | sed -e 's| ||g' | cut -f 1 -d '/'):$$(kubectl describe service -n istio-system kiali | grep TargetPort | cut -f 2- -d ' ' | sed -e 's| ||g' | cut -f 1 -d '/')
 
 k8s_enable:
 	@if [ "${NS}" = "" ]; then \

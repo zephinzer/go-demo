@@ -1,0 +1,61 @@
+# values.yaml
+# notes:
+# - use this https://istio.io/docs/reference/config/installation-options/file to adjust how istio is deployed by helm
+#   ref: https://istio.io/docs/reference/config/installation-options/
+# - apex level keys are sorted alphabetically
+
+# for proper ingress/gateways in/out of the cluster
+# we don't need this for development, just use kubectl port-forward
+gateways:
+  istio-ingressgateway:
+    enabled: false
+# sidecar and other istio configs
+global:
+  # proxy refers to pod sidecars
+  proxy:
+    resources:
+      limits:
+        cpu: 50m
+        memory: 50Mi
+      requests:
+        cpu: 25m
+        memory: 25Mi
+# metrics visualisation
+grafana:
+  enabled: true
+# network topography/fancy stuff
+kiali:
+  enabled: true
+  dashboard:
+    secretName: kiali
+    usernameKey: username
+    passphraseKey: password
+    grafanaURL: http://localhost:3000
+    jaegerURL: http://localhost:16686
+# cluster telemetry
+mixer:
+  telemetry:
+    resources:
+      limits:
+        cpu: 300m
+        memory: 500Mi
+      requests:
+        cpu: 150m
+        memory: 300Mi
+# envoy configurer
+pilot:
+  resources:
+    requests:
+      cpu: 200m
+      memory: 500Mi
+# zipkin/jaegar
+tracing:
+  enabled: true
+  zipkin:
+    resources:
+      limits:
+        cpu: 150m
+        memory: 500Mi
+      requests:
+        cpu: 100m
+        memory: 250Mi
