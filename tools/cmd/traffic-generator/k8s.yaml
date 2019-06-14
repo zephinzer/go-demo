@@ -1,0 +1,50 @@
+# deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traffic-generator
+  namespace: go-demo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: traffic-generator
+      type: cmd
+  template:
+    metadata:
+      labels:
+        app: traffic-generator
+        type: cmd
+    spec:
+      containers:
+      - name: traffic-generator
+        image: zephinzer/demo-traffic-generator:latest
+        envFrom:
+          - configMapRef:
+              name: traffic-generator
+        resources:
+          requests:
+            memory: 50Mi
+            cpu: 25m
+          limits:
+            memory: 75Mi
+            cpu: 40m
+
+---
+
+# configmap
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traffic-generator
+  namespace: go-demo
+data:
+  NAME: traffic-generator
+  BODY: ""
+  URL: "http://echoserver:11111"
+  METHOD: "GET"
+  REQUEST_CONCURRENCY: "3"
+  REQUEST_INTERVAL: "5s"
+  REQUEST_RATE: "1"

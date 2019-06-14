@@ -1,0 +1,65 @@
+# deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echoserver
+  namespace: go-demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: echoserver
+      type: cmd
+  template:
+    metadata:
+      labels:
+        app: echoserver
+        type: cmd
+    spec:
+      containers:
+      - name: echoserver
+        image: zephinzer/demo-echoserver:latest
+        envFrom:
+          - configMapRef:
+              name: echoserver
+        resources:
+          requests:
+            memory: 10Mi
+            cpu: 5m
+          limits:
+            memory: 15Mi
+            cpu: 10m
+        ports:
+        - containerPort: 11111
+
+---
+
+# configmap
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: echoserver
+  namespace: go-demo
+data:
+  NAME: "echoserver"
+  HOST: 0.0.0.0
+  PORT: "11111"
+
+---
+
+# service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: echoserver
+  namespace: go-demo
+spec:
+  selector:
+    app: echoserver
+    type: cmd
+  ports:
+  - port: 11111
+    targetPort: 11111
