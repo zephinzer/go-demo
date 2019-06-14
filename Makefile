@@ -62,7 +62,7 @@ build_deployments:
 
 build_tools:
 	# creates binaries for all tools
-	@cd tools && make build
+	@cd tools && make all
 
 publish_tools:
 	# publishes all tools to image repository
