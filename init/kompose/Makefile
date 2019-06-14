@@ -1,3 +1,14 @@
+define HELP_OUTPUT
+
+Kompose
+^^^^^^^
+This is a tool for converting docker-compose.ymls into their
+kubernetes manifest counterparts
+
+Link: https://github.com/kubernetes/kompose
+
+endef
+
 include ../../scripts/Makefile
 
 version_info:
