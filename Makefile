@@ -27,19 +27,29 @@ help_root:
 
 bootstrap:
 	#
+	# create ssl certs for tools to use https
+	@sleep 3
+	-@$(MAKE) ssl
+	#
 	# docker is required to build images
+	@sleep 3
 	-@$(MAKE) check_prereq_docker
 	#
 	# docker-compose is required to run deployments
+	@sleep 3
 	-@$(MAKE) check_prereq_docker_compose
 	#
-	# go is required to compile the tools
-	-@$(MAKE) check_prereq_go
+	# go is required to compile the tools, we check for it,
+	# then go into the tools directory to retrieve dependencies
+	@sleep 3
+	-@$(MAKE) check_prereq_go && cd ./tools && $(MAKE) dep
 	#
 	# kubectl is required to communicate with the k8s cluster
+	@sleep 3
 	-@$(MAKE) check_prereq_kubectl
 	#
 	# minikube is required to bring up a k8s cluster
+	@sleep 3
 	-@$(MAKE) check_prereq_minikube
 
 # deployments
