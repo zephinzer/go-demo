@@ -1,3 +1,5 @@
+include ../../scripts/Makefile
+
 define HELP_OUTPUT
 
 Kubectl
@@ -8,7 +10,19 @@ Link: https://github.com/kubernetes/kubectl
 
 endef
 
-include ../../scripts/Makefile
+tldr_install:
+	#
+	# get latest versions
+	@$(MAKE) version_info
+	#
+	# get latest version
+	@$(MAKE) version_latest
+	#
+	# bring in the latest version locally
+	@$(MAKE) download
+	#
+	# install it to our path
+	@$(MAKE) install
 
 version_info:
 	@curl https://api.github.com/repos/kubernetes/kubernetes/releases > ./.version_info

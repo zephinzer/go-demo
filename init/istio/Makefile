@@ -1,10 +1,30 @@
 include ../../scripts/Makefile
 
+define HELP_OUTPUT
+
+Istio
+^^^^^
+Istio is a service mesh. We use it for it's ability to provide
+telemetry and distributed tracing capabilities without code
+instrumentation
+
+Link: https://github.com/istio/istio
+
+endef
+
 # installs the client side stuff
 tldr_install:
+	#
+	# get latest versions
 	@$(MAKE) version_info
+	#
+	# get latest version
 	@$(MAKE) version_latest
+	#
+	# bring in the latest version locally
 	@$(MAKE) download
+	#
+	# install it to our path
 	@$(MAKE) install
 
 # installs the server side stuff

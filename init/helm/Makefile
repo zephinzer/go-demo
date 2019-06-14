@@ -1,15 +1,30 @@
 include ../../scripts/Makefile
 
+define HELP_OUTPUT
+
+Helm
+^^^^
+Helm is a package manager for Kubernetes which helps us
+spin up support services quickly and lets us rollback stuff
+
+Link: https://github.com/helm/helm
+
+endef
+
 # installs helm and tiller locally on the machine this recipe
 # is being run on
 # * intended for use on a fresh cluster
 tldr_install:
+	#
 	# get latest versions
 	@$(MAKE) version_info
+	#
 	# get latest version
 	@$(MAKE) version_latest
+	#
 	# bring in the latest version
 	@$(MAKE) download
+	#
 	# install it to our path
 	@$(MAKE) install
 
@@ -32,6 +47,7 @@ tldr_k8s:
 
 version_info:
 	@curl https://api.github.com/repos/helm/helm/releases > ./.version_info
+
 version_latest:
 	@cat ./.version_info | jq '.[].tag_name' -r | egrep "^v[0-9]+\.[0-9]+\.[0-9]+$$" | sort -V | tail -n 1 > ./.version_latest
 	@printf -- "latest version '$$(cat ./.version_latest)' stored in ./.version_latest\n"
@@ -50,10 +66,6 @@ download:
 		&& mv ./tiller$(BIN_EXT) "./tiller-$(SYS_OS)-$(SYS_ARCH)$(BIN_EXT)"
 
 install:
-	@$(MAKE) install_helm
-	@$(MAKE) install_tiller
-
-install_helm:
 	@mkdir -p /opt/helm
 	@if ! [ -f "/opt/helm/helm-$$(cat ./.version_latest)$(BIN_EXT)" ]; then \
 		cp "./bin/$$(cat ./.version_latest)/helm-$(SYS_OS)-$(SYS_ARCH)$(BIN_EXT)" \
@@ -87,8 +99,9 @@ install_tiller:
 
 check: verify
 verify:
-	-@helm version && ls -al $$(which helm)
-	-@tiller version && ls -al $$(which tiller)
+	@which helm \
+		&& ls -al $$(which helm) \
+		&& helm version --client
 
 #################
 # securing helm #
