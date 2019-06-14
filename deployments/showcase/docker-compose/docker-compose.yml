@@ -4,8 +4,7 @@ services:
     build:
       args:
         BIN_NAME: echoserver
-      context: ../../../build/bin
-      dockerfile: ../../deployments/Dockerfile
+      context: ../../../tools
     image: zephinzer/demo-echoserver:latest
     environment:
       NAME: "echoserver1"
@@ -18,8 +17,7 @@ services:
     build:
       args:
         BIN_NAME: echoserver
-      context: ../../../build/bin
-      dockerfile: ../../deployments/Dockerfile
+      context: ../../../tools
     image: zephinzer/demo-echoserver:latest
     environment:
       NAME: "echoserver2"
@@ -32,8 +30,7 @@ services:
     build:
       args:
         BIN_NAME: echoserver
-      context: ../../../build/bin
-      dockerfile: ../../deployments/Dockerfile
+      context: ../../../tools
     image: zephinzer/demo-echoserver:latest
     environment:
       NAME: "echoserver3"
@@ -46,8 +43,7 @@ services:
     build:
       args:
         BIN_NAME: fwdserver
-      context: ../../../build/bin
-      dockerfile: ../../deployments/Dockerfile
+      context: ../../../tools
     image: zephinzer/demo-fwdserver:latest
     environment:
       NAME: "fwdserver"
@@ -64,8 +60,7 @@ services:
     build:
       args:
         BIN_NAME: healthcheck
-      context: ../../../build/bin
-      dockerfile: ../../deployments/Dockerfile
+      context: ../../../tools
     image: zephinzer/demo-healthcheck:latest
     environment:
       NAME: "healthcheck"
@@ -78,8 +73,7 @@ services:
     build:
       args:
         BIN_NAME: traffic-generator
-      context: ../../../build/bin
-      dockerfile: ../../deployments/Dockerfile
+      context: ../../../tools
     image: zephinzer/demo-traffic-generator:latest
     environment:
       NAME: "traffic-generator"
