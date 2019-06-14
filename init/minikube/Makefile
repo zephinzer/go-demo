@@ -1,4 +1,4 @@
-include ../Makefile
+include ../../scripts/Makefile
 
 version_info:
 	@curl https://api.github.com/repos/kubernetes/minikube/releases > ./.version_info

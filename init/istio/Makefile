@@ -1,4 +1,4 @@
-include ../Makefile
+include ../../scripts/Makefile
 
 # installs the client side stuff
 tldr_install:

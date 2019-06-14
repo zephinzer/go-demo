@@ -1,4 +1,4 @@
-include ../Makefile
+include ../../scripts/Makefile
 
 # sets up the environment
 play:

@@ -1,4 +1,4 @@
-include ../Makefile
+include ../../scripts/Makefile
 
 # installs helm and tiller locally on the machine this recipe
 # is being run on

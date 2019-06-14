@@ -1,4 +1,4 @@
-include ../Makefile
+include ../../scripts/Makefile
 
 version_info:
 	@curl https://api.github.com/repos/linkerd/linkerd2/releases > ./.version_info
