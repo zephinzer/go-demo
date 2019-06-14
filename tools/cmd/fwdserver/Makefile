@@ -3,6 +3,10 @@ PATH_TO_CERT=../../../assets/certs/server.crt
 PATH_TO_KEY=../../../assets/keys/server.key
 PORT=11112
 
+# print the help message
+help:
+	@less ./README.md
+
 run:
 	CERT=$(PATH_TO_CERT) \
 		KEY=$(PATH_TO_KEY) \

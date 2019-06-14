@@ -1,3 +1,5 @@
+include ../scripts/Makefile
+
 define HELP_OUTPUT
 
 The '~/tools' directory contains Go applications used for
@@ -17,10 +19,8 @@ Alternatively to build everything: `make all`
 endef
 export HELP_OUTPUT
 
-help:
+help_tools:
 	@echo "$${HELP_OUTPUT}"
-
-include ../scripts/Makefile
 
 all:
 	@$(MAKE) echoserver \

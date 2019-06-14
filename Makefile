@@ -1,5 +1,7 @@
 # recipes here are mostly for use in the ci pipeline
 
+include ./scripts/Makefile
+
 define HELP_OUTPUT
 
 Cloud Native Demos by @zephinzer
@@ -20,10 +22,8 @@ endef
 export HELP_OUTPUT
 
 # print the help message
-help:
+help_root:
 	@printf -- "$${HELP_OUTPUT}"
-
-include ./scripts/Makefile
 
 bootstrap:
 	#

@@ -1,5 +1,9 @@
 APP_NAME=traffic-generator
 
+# print the help message
+help:
+	@less ./README.md
+
 run:
 	go run .
 

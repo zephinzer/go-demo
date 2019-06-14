@@ -46,8 +46,20 @@ else
 	endif
 endif
 
-help:
+define HELP_OUTPUT
 
+Scripts
+^^^^^^^
+
+This directory contains utility scripts used in other places
+of the project.
+
+endef
+export HELP_OUTPUT
+
+# print the help message
+help_scripts:
+	@printf -- "$${HELP_OUTPUT}"
 
 sys_info:
 	@printf -- "SYS_OS       : '$(SYS_OS)'\n"

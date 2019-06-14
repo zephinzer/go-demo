@@ -1,3 +1,5 @@
+include ../scripts/Makefile
+
 define HELP_OUTPUT
 
 Example deployments
@@ -9,7 +11,7 @@ endef
 export HELP_OUTPUT
 
 # print the help message
-help:
+help_deployments:
 	@printf -- "$${HELP_OUTPUT}"
 
 prereq_check:
@@ -17,8 +19,6 @@ prereq_check:
 	-@$(MAKE) check_prereq_docker
 	-@$(MAKE) check_prereq_docker_compose
 	-@$(MAKE) check_prereq_kubectl
-
-include ../scripts/Makefile
 
 build:
 	# builds images for all deployments
