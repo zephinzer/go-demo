@@ -98,6 +98,7 @@ k8s_install_istio:
 		--set global.proxy.resources.requests.memory=25Mi \
 		--set grafana.enabled=true \
 		--set kiali.enabled=true \
+		--set kiali.dashboard.secretName=kiali \
 		--set kiali.dashboard.usernameKey=username \
 		--set kiali.dashboard.passphraseKey=password \
 		--set kiali.dashboard.grafanaURL=http://localhost:3000 \
