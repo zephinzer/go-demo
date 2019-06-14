@@ -1,68 +1,59 @@
-all:
-	@$(MAKE) echoserver
-	@$(MAKE) fwdserver
-	@$(MAKE) healthcheck
-	@$(MAKE) traffic-generator
+# recipes here are mostly for use in the ci pipeline
 
-publish:
-	@$(MAKE) echoserver_publish
-	@$(MAKE) fwdserver_publish
-	@$(MAKE) healthcheck_publish
-	@$(MAKE) traffic-generator_publish
+define HELP_OUTPUT
 
-showcase:
-	@cd ./deployments/showcase/docker-compose \
-		&& docker-compose up -V
+Cloud Native Demos by @zephinzer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+This repository contains tools and setups to demonstrate
+cloud native technologies. The directories are structured
+as such:
 
-showcase_d:
-	@cd ./deployments/showcase \
-		&& docker-compose up -d -V
+~/assets:      contains misc stuff like certs/keys for general use
+~/deployments: example deployments for docker-compose or k8s
+~/init:        setup scripts to initialise k8s clusters
+~/scripts:     some tooling makefiles
+~/tools:       apps for concept demonstration (written in go)
 
-echoserver: dep
-	@$(MAKE) app APP=echoserver
-echoserver_publish: echoserver
-	@$(MAKE) app_publish APP=echoserver
+Run `make bootstrap` to setup this repository for use.
 
-fwdserver: dep
-	@$(MAKE) app APP=fwdserver
-fwdserver_publish: fwdserver
-	@$(MAKE) app_publish APP=fwdserver
+endef
+export HELP_OUTPUT
 
-healthcheck: dep
-	@$(MAKE) app APP=healthcheck
-healthcheck_publish: healthcheck
-	@$(MAKE) app_publish APP=healthcheck
+# print the help message
+help:
+	@printf -- "$${HELP_OUTPUT}"
 
-traffic-generator: dep
-	@$(MAKE) app APP=traffic-generator
-traffic-generator_publish: traffic-generator
-	@$(MAKE) app_publish APP=traffic-generator
+include ./scripts/Makefile
 
-########################
-# provisioning recipes #
-########################
+bootstrap:
+	#
+	# docker is required to build images
+	-@$(MAKE) check_prereq_docker
+	#
+	# docker-compose is required to run deployments
+	-@$(MAKE) check_prereq_docker_compose
+	#
+	# go is required to compile the tools
+	-@$(MAKE) check_prereq_go
+	#
+	# kubectl is required to communicate with the k8s cluster
+	-@$(MAKE) check_prereq_kubectl
+	#
+	# minikube is required to bring up a k8s cluster
+	-@$(MAKE) check_prereq_minikube
 
-dep:
-	@go mod vendor
+# deployments
 
-setup:
-	@cd init && docker-compose up -d -V
+build_deployments:
+	# builds the images required for deployments
+	@cd deployments && make build
 
-teardown:
-	@cd init && docker-compose down
+# tools
 
-###################
-# utility recipes #
-###################
+build_tools:
+	# creates binaries for all tools
+	@cd tools && make build
 
-app:
-	@cd ./cmd/${APP} && $(MAKE) build && $(MAKE) image
-app_publish:
-	@cd ./cmd/${APP} && $(MAKE) publish
-
-ssl:
-	@mkdir -p ./assets/keys
-	@openssl genrsa -out ./assets/keys/server.key 2048
-	@mkdir -p ./assets/certs
-	@openssl req -new -x509 -sha256 -key ./assets/keys/server.key -out ./assets/certs/server.crt -days 3650 \
-		-subj "/C=SG/ST=Singapore/L=Singapore/O=Sia/CN=localhost"
+publish_tools:
+	# publishes all tools to image repository
+	@cd tools && make publish

@@ -14,8 +14,15 @@ env:
 jobs:
   include:
     - stage: build_and_publish
+      env:
+        - TYPE=deployments
       script:
-        - make all
+        - make build_deployments
+    - stage: build_and_publish
+      env:
+        - TYPE=tools
+      script:
+        - make build_tools
         - docker login docker.io -u ${DOCKERHUB_USER} -p ${DOCKERHUB_PASSWORD}
-        - make publish
+        - make publish_tools
         - docker logout

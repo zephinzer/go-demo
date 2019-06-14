@@ -3,13 +3,17 @@ A playground for container orchestration and cloud native applications.
 
 [![Build Status](https://travis-ci.org/zephinzer/go-demo.svg?branch=master)](https://travis-ci.org/zephinzer/go-demo)
 
-# Contents Of Interest
+# Usage
 
-- [**Demo Apps**](./cmd): Cloud native applications for use to demonstrate concepts, test out behaviours, generate logs, generate metrics *et cetera*
-- [**Deployments**](./deployments): Example deployments for Docker Compose/Kubernetes
-- [**Init**](./init): Application/service installations and setups
+The code is mostly self-documenting via the `Makefile`s in each directory. The convention in each directory enables you to run `make` in any of the non-WIP directories and see a help text output. Open the relevant `Makefile`s to check out what can be done.
 
-# Main Usage
+If something's unclear/not right, feel free to [raise an issue](/zephinzer/go-demo/issues)!
+
+# Content
+
+- [Example Deployments](./deployments/README.md)
+- [Cluster Initialisations](./init/README.md)
+- [Cloud Native Demo Tools](./tools/README.md)
 
 ## Setting Up
 
