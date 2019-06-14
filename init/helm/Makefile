@@ -33,10 +33,7 @@ tldr_install:
 #		modify the helm_create_cert_authority step
 # * intended for use on a fresh cluster
 tldr_k8s:
-	@$(MAKE) helm_create_cert_authority
-	@$(MAKE) helm_create_user_keys
-	@$(MAKE) helm_create_user_csrs
-	@$(MAKE) helm_create_user_certs
+	@$(MAKE) ssl
 	@kubectl apply -f ./resources/helm_namespace_access.yaml
 	@$(MAKE) helm_secure_init_do
 	@$(MAKE) helm_copy_certs_to_helm_home
@@ -106,6 +103,12 @@ verify:
 #################
 # securing helm #
 #################
+
+ssl: # so we don't overwrite the ssl directory and lose access
+	@$(MAKE) helm_create_cert_authority
+	@$(MAKE) helm_create_user_keys
+	@$(MAKE) helm_create_user_csrs
+	@$(MAKE) helm_create_user_certs
 
 # note: for production, use a propert root ca
 helm_create_cert_authority:
