@@ -14,7 +14,7 @@ run:
 		go run .
 
 build:
-	CGO_ENABLED=0 go build -a -ldflags "-extldflags '-static'" -o ../../build/bin/$(APP_NAME) .
+	GO111MODULE=on CGO_ENABLED=0 go build -mod vendor -a -ldflags "-extldflags '-static'" -o ../../build/bin/$(APP_NAME) .
 
 image:
 	docker build \
