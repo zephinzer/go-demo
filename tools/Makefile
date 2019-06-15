@@ -23,11 +23,10 @@ help_tools:
 	@echo "$${HELP_OUTPUT}"
 
 all:
-	@$(MAKE) echoserver \
-		& $(MAKE) fwdserver \
-		& $(MAKE) healthcheck \
-		& $(MAKE) traffic-generator \
-		& wait
+	@$(MAKE) echoserver
+	@$(MAKE) fwdserver
+	@$(MAKE) healthcheck
+	@$(MAKE) traffic-generator
 
 publish:
 	@$(MAKE) echoserver_publish
