@@ -1,5 +1,34 @@
 include ../../scripts/Makefile
 
+define HELP_OUTPUT
+
+Minikube
+^^^^^^^^
+Helm is a package manager for Kubernetes which helps us
+spin up support services quickly and lets us rollback stuff
+
+Link: https://github.com/helm/helm
+
+endef
+
+# installs the linkerd cli locally on the machine this recipe
+# is being run on
+# * intended for use on a fresh cluster
+tldr_install:
+	#
+	# get latest versions
+	@$(MAKE) version_info
+	#
+	# get latest version
+	@$(MAKE) version_latest
+	#
+	# bring in the latest version
+	@$(MAKE) download
+	#
+	# install it to our path
+	@$(MAKE) install
+
+
 version_info:
 	@curl https://api.github.com/repos/kubernetes/minikube/releases > ./.version_info
 

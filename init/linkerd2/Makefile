@@ -2,12 +2,12 @@ include ../../scripts/Makefile
 
 define HELP_OUTPUT
 
-Helm
-^^^^
-Helm is a package manager for Kubernetes which helps us
-spin up support services quickly and lets us rollback stuff
+LinkerD 2
+^^^^^^^^^
+LinkerD is a service mesh for a k8s cluster, this init
+setup installs linkerd2, not linkerd.
 
-Link: https://github.com/helm/helm
+Link: https://github.com/linkerd/linkerd2
 
 endef
 
