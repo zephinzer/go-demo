@@ -105,6 +105,13 @@ check_prereq_kubectl:
 		&& kubectl version --short --client
 	@printf -- '✅ kubectl client found!\n'
 
+check_prereq_kvm2:
+	@printf -- '👉🏼 checking for kvm2...\n'
+	@which kvm \
+		&& ls -al "$$(which kvm)" \
+		&& kvm --version | grep 'version 2'
+	@printf -- '✅ kvm2 found!\n'
+
 check_prereq_minikube:
 	@printf -- '👉🏼 checking for minikube...\n'
 	@which minikube \
