@@ -1,5 +1,40 @@
 include ../../scripts/Makefile
 
+define HELP_OUTPUT
+
+Helm
+^^^^
+Helm is a package manager for Kubernetes which helps us
+spin up support services quickly and lets us rollback stuff
+
+Link: https://github.com/helm/helm
+
+endef
+
+# installs the linkerd cli locally on the machine this recipe
+# is being run on
+# * intended for use on a fresh cluster
+tldr_install:
+	#
+	# get latest versions
+	@$(MAKE) version_info
+	#
+	# get latest version
+	@$(MAKE) version_latest
+	#
+	# bring in the latest version
+	@$(MAKE) download
+	#
+	# install it to our path
+	@$(MAKE) install
+
+# installs linkerd into the default cluster as defined
+# by your kubectl config (run `kubectl config view` to see it)
+tldr_k8s:
+	@$(MAKE) k8s_pre_install_check
+	@$(MAKE) k8s_install
+	@$(MAKE) k8s_post_install_check
+
 version_info:
 	@curl https://api.github.com/repos/linkerd/linkerd2/releases > ./.version_info
 	
