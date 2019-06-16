@@ -1,0 +1,4 @@
+# this file is here to keep the wp-content directory
+# if you need to do local development
+*
+!.gitignore

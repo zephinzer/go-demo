@@ -26,16 +26,13 @@ build:
 
 showcase:
 	# runs the showcase deployment in the foreground
-	@cd ./showcase/docker-compose \
-		&& docker-compose up -V
-
+	@$(MAKE) _showcase ARGS="up -V"
 showcase_d:
 	# runs the showcase deployment in the background
-	@cd ./showcase/docker-compose \
-		&& docker-compose up -d -V
-
+	@$(MAKE) _showcase ARGS="up -d -V"
 showcase_build:
 	# builds the images for the showcase deployment
 	@cd ../tools && $(MAKE) all
-	@cd ./showcase/docker-compose \
-		&& docker-compose build
+	@$(MAKE) _showcase ARGS="build"
+_showcase:
+	@cd ./showcase/docker-compose && docker-compose ${ARGS}

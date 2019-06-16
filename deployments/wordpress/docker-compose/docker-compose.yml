@@ -1,0 +1,28 @@
+version: "3.5"
+services:
+  wordpress:
+    depends_on:
+      - mysql
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_USER: user
+      WORDPRESS_DB_PASSWORD: password
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_TABLE_PREFIX: wp
+    image: wordpress:5.2.1-php7.2-apache
+    # enable the below for development of plugins/themes
+    # - remember to create the directory first or wordpress
+    #   won't be able to access it (docker creates it as root)
+    volumes:
+      - ./wp-content:/var/www/html/wp-content:rw
+    ports:
+      - 18080:80
+  mysql:
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: wordpress
+    image: mysql:5.7.25
+    ports:
+      - 13306:3306
