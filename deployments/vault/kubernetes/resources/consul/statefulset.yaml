@@ -1,0 +1,8 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: consul
+spec:
+  serviceName: consul
+  replicas: 3
+  
