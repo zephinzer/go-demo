@@ -41,8 +41,7 @@ download:
 	@mkdir -p ./bin/$$(cat ./.version_latest)
 	@curl -Lo "./bin/$$(cat ./.version_latest)/consul-$(SYS_OS)-$(SYS_ARCH).zip" \
 		"https://releases.hashicorp.com/consul/$$(cat ./.version_latest)/consul_$$(cat ./.version_latest)_$(SYS_OS)_$(SYS_ARCH).zip"
-	@cd ./bin/$$(cat ./.version_latest) \
-		&& unzip "consul-$(SYS_OS)-$(SYS_ARCH).zip" \
+	@unzip -d "./bin/$$(cat ./.version_latest)/" "./bin/$$(cat ./.version_latest)/consul-$(SYS_OS)-$(SYS_ARCH).zip" \
 		&& chmod +x "./bin/$$(cat ./.version_latest)/consul$(BIN_EXT)"
 
 install:

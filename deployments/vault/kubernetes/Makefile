@@ -17,31 +17,51 @@ include ../../../scripts/Makefile
 
 prereq:
 	#
-	# get the go dependencies
-	@ls -al $$(which go)
+	# check if go is available
+	# - if this fails, install go 1.12.* and try again
 	#
+	which go && ls -al $$(which go)
+	#
+	# check if cfssl is installed
+	# - if this fails, run `make install_cfssl` from this directory
+	#
+	which cfssl && ls -al $$(which cfssl)
+	which cfssljson && ls -al $$(which cfssljson)
+	#
+	# check for minikube availability
+	# - if this fails, navigate to ~/init/minikube and run `make tldr_install`
+	#
+	which minikube && ls -al $$(which minikube)
+	#
+	# consul is used for generation of the gossip encryption key
+	# - if this fails, navigate to ~/init/consul and run `make tldr_install`
+	#
+	which consul && ls -al $$(which consul)
+	#
+	# if you reached here you're good to go (:
+
+install_cfssl:
+	#
+	# check if go is available
+	#
+	which go && ls -al $$(which go)
 	#
 	# download the certificate creator tools - better than generating them by hand via opeenssl gen
 	#
-	@go get -v -u github.com/cloudflare/cfssl/cmd/cfssl
-	@go get -v -u github.com/cloudflare/cfssl/cmd/cfssljson
-	#
-	# check that go get installed cfssl in the right place
-	#
-	@which cfssl && ls -al $$(which cfssl)
-	@which cfssljson && ls -al $$(which cfssljson)
-	#
-	# check for minikube availability
-	#
-	@which minikube && ls -al $$(which minikube)
-	#
-	# consul is used for generation of the gossip encryption key
-	#
-	@which consul && ls -al $$(which consul)
+	go get -v -u github.com/cloudflare/cfssl/cmd/cfssl
+	go get -v -u github.com/cloudflare/cfssl/cmd/cfssljson
 
 # you need to run this before any of the `kubectl` commands will work
 start_minikube:
-	minikube start -p vault --vm-driver kvm2 --disk-space 5G --memory 2048 --cpus 2
+	#
+	# spinning up a minikube cluster for us to deploy vault
+	#
+	minikube start -v8 \
+		-p vault \
+		--vm-driver kvm2 \
+		--disk-size 5G \
+		--memory 2048 \
+		--cpus 2
 
 ######################
 # secrets generation #
