@@ -2,6 +2,7 @@ apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: consul
+  namespace: vault
 spec:
   serviceName: consul
   replicas: 3
@@ -77,4 +78,10 @@ spec:
               name: consuldns
             - containerPort: 8300
               name: server
-        
+      volumes:
+        - name: config
+          configMap:
+            name: consul
+        - name: tls
+          secret:
+            secretName: consul

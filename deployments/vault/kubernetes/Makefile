@@ -1,3 +1,5 @@
+include ../../../scripts/Makefile
+
 define HELP_OUTPUT
 
 Vault on Kubernetes
@@ -9,11 +11,13 @@ using Consul as a backend. Use an external load balancer
 to access the Vault service so that Kubernetes becomes just
 an implementation detail.
 
-Ref01: https://testdriven.io/blog/running-vault-and-consul-on-kubernetes
+Link: https://www.vaultproject.io/
+
+References:
+- https://testdriven.io/blog/running-vault-and-consul-on-kubernetes
 
 endef
-
-include ../../../scripts/Makefile
+export HELP_OUTPUT
 
 prereq:
 	#
@@ -68,7 +72,8 @@ start_minikube:
 ######################
 
 secrets_create_ca:
-	cfssl gencert -initca ./resources/cfssl/ca-csr.json | cfssljson -bare ./resources/certs/ca
+	cfssl gencert -initca ./resources/cfssl/ca-csr.json | \
+		cfssljson -bare ./resources/certs/ca
 	cfssl gencert \
 		-ca=./resources/certs/ca.pem \
 		-ca-key=./resources/certs/ca-key.pem \
@@ -85,13 +90,6 @@ secrets_create_ca:
 secrets_create_gossip_key:
 	@printf -- "$$(consul keygen)" > ./resources/gossip/key
 
-secrets_init_k8s:
-	@kubectl create secret -n $(K8S_NAMESPACE) generic consul \
-		--from-literal="gossip-encryption-key=$$(cat ./resources/gossup/key)" \
-		--from-file=resources/certs/ca.pem \
-		--from-file=resources/certs/consul.pem \
-		--from-file=resources/certs/consul-key.pem
-
 
 #################################
 # secrets initialisation in k8s #
@@ -99,20 +97,30 @@ secrets_init_k8s:
 #
 # run this in the order in which they appear!
 K8S_NAMESPACE=vault
-# if you'd like to change the above values, create a file named
-# `Makefile.properties` in this directory and override it
+# NOTE 1: if you'd like to change the above values, create a file named
+#         `Makefile.properties` in this directory and override it
+# NOTE 2: if you're changing this, you'll likely need to change the
+#         k8s manifest yamls located at `./resources/consul``
 -include ./Makefile.properties
 
 k8s_create_namespace:
-	# creates the namespace for all the other operations to run in
 	@kubectl create namespace $(K8S_NAMESPACE)
 
+k8s_create_secrets:
+	@kubectl create secret -n $(K8S_NAMESPACE) generic consul \
+		--from-literal="gossip-encryption-key=$$(cat ./resources/gossip/key)" \
+		--from-file=resources/certs/ca.pem \
+		--from-file=resources/certs/consul.pem \
+		--from-file=resources/certs/consul-key.pem
+
 k8s_create_config:
-	@kubectl create -n $(K8S_NAMESPACE) -f ./consul/configmap.yaml
+	@kubectl create -f ./resources/consul/configmap.yaml
 
 k8s_create_service:
-	@kubectl create -n $(K8S_NAMESPACE) -f ./consul/service.yaml
+	@kubectl create -f ./resources/consul/service.yaml
 
 k8s_create_deployment:
-	@kubectl create -n $(K8S_NAMESPACE) -f ./consul/statefulset.yaml
+	@kubectl create -f ./resources/consul/statefulset.yaml
 
+k8s_portforward:
+	@kubectl port-forward 
