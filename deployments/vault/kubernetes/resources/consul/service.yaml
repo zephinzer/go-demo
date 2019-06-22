@@ -3,10 +3,12 @@ kind: Service
 metadata:
   name: consul
   namespace: vault
+  labels:
+    name: consul
 spec:
+  clusterIP: None
   selector:
     app: consul
-  clusterIP: None
   ports:
     - name: http
       port: 8500
