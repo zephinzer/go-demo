@@ -1,0 +1,41 @@
+# this file is not used in the showcase, it demonstrates usage
+# of vault's auto-unseal feature. to use this, scroll down to
+# the kms section and fill up your details. after starting
+# vault, do a kubectl exec -it <pod name> /bin/sh and run:
+#
+# `vault operator init -recovery-shares=1 -recovery-threshold=1 -tls-skip-verify`
+#
+# to try it out
+#
+# ref: https://learn.hashicorp.com/vault/day-one/ops-autounseal-aws-kms#step-2-test-the-auto-unseal-feature
+#
+# note that this version also does not have a ui and is meant
+# to be more of a 'production' configuration
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault
+  namespace: vault
+data:
+  config.hcl: |-
+    listener "tcp" {
+      address = "0.0.0.0:8200"
+      tls_disable = 0
+      tls_cert_file = "/etc/tls/vault.pem"
+      tls_key_file = "/etc/tls/vault-key.pem"
+    }
+
+    storage "consul" {
+      address = "consul:8500"
+      path = "vault/"
+      disable_registration = "true"
+      ha_enabled = "true"
+    }
+
+    seal "awskms" {
+      region = <aws region>
+      access_key = <aws iam access>
+      secret_key = <aws iam secret>
+      kms_key_id = <aws kms key id>
+    }

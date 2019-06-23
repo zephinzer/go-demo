@@ -1,0 +1,19 @@
+# this file is not used in the showcase, but is useful if
+# you're using this repository to deploy on aws
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: consul
+  namespace: vault
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: slow
+  selector:
+    matchLabels:
+      app: consul

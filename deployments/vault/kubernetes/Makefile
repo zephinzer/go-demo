@@ -11,10 +11,14 @@ using Consul as a backend. Use an external load balancer
 to access the Vault service so that Kubernetes becomes just
 an implementation detail.
 
+This showcase includes (but does not demonstrate) samples for
+auto-unseal as well as persistent consul storage.
+
 Link: https://www.vaultproject.io/
 
 References:
 - https://testdriven.io/blog/running-vault-and-consul-on-kubernetes
+- https://learn.hashicorp.com/vault/day-one/ops-autounseal-aws-kms
 
 endef
 export HELP_OUTPUT
@@ -131,10 +135,14 @@ tldr_k8s_init:
 	# apply the *_create_* steps
 	#
 	@$(MAKE) k8s_create_namespace
-	@$(MAKE) k8s_create_secrets
-	@$(MAKE) k8s_create_config
-	@$(MAKE) k8s_create_service
-	@$(MAKE) k8s_create_deployment
+	@$(MAKE) k8s_create_secrets_consul
+	@$(MAKE) k8s_create_config_consul
+	@$(MAKE) k8s_create_service_consul
+	@$(MAKE) k8s_create_deployment_consul
+	@$(MAKE) k8s_create_secrets_vault
+	@$(MAKE) k8s_create_config_vault
+	@$(MAKE) k8s_create_service_vault
+	@$(MAKE) k8s_create_deployment_vault
 
 tldr_k8s_purge:
 	#
@@ -144,10 +152,14 @@ tldr_k8s_purge:
 	#
 	# apply the *_delete_* steps in the order they were created
 	#
-	@$(MAKE) k8s_delete_deployment
-	@$(MAKE) k8s_delete_service
-	@$(MAKE) k8s_delete_config
-	@$(MAKE) k8s_delete_secrets
+	@$(MAKE) k8s_delete_deployment_vault
+	@$(MAKE) k8s_delete_service_vault
+	@$(MAKE) k8s_delete_config_vault
+	@$(MAKE) k8s_delete_secrets_vault
+	@$(MAKE) k8s_delete_deployment_consul
+	@$(MAKE) k8s_delete_service_consul
+	@$(MAKE) k8s_delete_config_consul
+	@$(MAKE) k8s_delete_secrets_consul
 	@$(MAKE) k8s_delete_namespace
 
 k8s_create_namespace:
@@ -156,33 +168,65 @@ k8s_create_namespace:
 k8s_delete_namespace:
 	@kubectl delete namespace $(K8S_NAMESPACE)
 
-k8s_create_secrets:
-	@kubectl create secret generic consul \
+k8s_create_secrets_consul:
+	@kubectl create secret -n $(K8S_NAMESPACE) generic consul \
 		--from-literal="gossip-encryption-key=$$(cat ./resources/gossip/key)" \
 		--from-file=resources/certs/ca.pem \
 		--from-file=resources/certs/consul.pem \
 		--from-file=resources/certs/consul-key.pem
+	@kubectl describe secret -n $(K8S_NAMESPACE) consul
 
-k8s_delete_secrets:
-	@kubectl delete secret consul
+k8s_delete_secrets_consul:
+	@kubectl delete secret -n $(K8S_NAMESPACE) consul
 
-k8s_create_config:
-	@kubectl create -f ./resources/consul/configmap.yaml
+k8s_create_secrets_vault:
+	@kubectl create secret -n $(K8S_NAMESPACE) generic vault \
+		--from-file=resources/certs/ca.pem \
+		--from-file=resources/certs/vault.pem \
+		--from-file=resources/certs/vault-key.pem
+	@kubectl describe secret -n $(K8S_NAMESPACE) vault
 
-k8s_delete_config:
+k8s_delete_secrets_vault:
+	@kubectl delete secret -n $(K8S_NAMESPACE) vault
+
+k8s_create_config_consul:
+	@kubectl apply -f ./resources/consul/configmap.yaml
+
+k8s_delete_config_consul:
 	@kubectl delete -f ./resources/consul/configmap.yaml
 
-k8s_create_service:
-	@kubectl create -f ./resources/consul/service.yaml
+k8s_create_config_vault:
+	@kubectl apply -f ./resources/vault/configmap.yaml
 
-k8s_delete_service:
+k8s_delete_config_vault:
+	@kubectl delete -f ./resources/vault/configmap.yaml
+
+k8s_create_service_consul:
+	@kubectl apply -f ./resources/consul/service.yaml
+
+k8s_delete_service_consul:
 	@kubectl delete -f ./resources/consul/service.yaml
 
-k8s_create_deployment:
-	@kubectl create -f ./resources/consul/statefulset.yaml
+k8s_create_service_vault:
+	@kubectl apply -f ./resources/vault/service.yaml
 
-k8s_delete_deployment:
+k8s_delete_service_vault:
+	@kubectl delete -f ./resources/vault/service.yaml
+
+k8s_create_deployment_consul:
+	@kubectl apply -f ./resources/consul/statefulset.yaml
+
+k8s_delete_deployment_consul:
 	@kubectl delete -f ./resources/consul/statefulset.yaml
 
+k8s_create_deployment_vault:
+	@kubectl apply -f ./resources/vault/deployment.yaml
+
+k8s_delete_deployment_vault:
+	@kubectl delete -f ./resources/vault/deployment.yaml
+
 k8s_view_consul:
-	@kubectl port-forward consul-1 8500:8500
+	@kubectl port-forward -n $(K8S_NAMESPACE) consul-1 8500:8500
+
+k8s_view_vault:
+	@kubectl port-forward -n $(K8S_NAMESPACE) 8200:8200

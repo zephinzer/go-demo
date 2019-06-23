@@ -35,23 +35,26 @@ spec:
             - "-advertise=$(POD_IP)"
             - "-bind=0.0.0.0"
             - "-bootstrap-expect=3"
-            - "-retry-join=consul-0.consul.$(NAMESPACE).svc.cluster.local"
-            - "-retry-join=consul-1.consul.$(NAMESPACE).svc.cluster.local"
-            - "-retry-join=consul-2.consul.$(NAMESPACE).svc.cluster.local"
             - "-client=0.0.0.0"
             - "-config-file=/consul/conf.d/config.json"
             - "-datacenter=dc1"
             - "-data-dir=/consul/data"
+            - "-disable-host-node-id"
             - "-domain=cluster.local"
             - "-encrypt=$(GOSSIP_ENCRYPTION_KEY)"
+            - "-retry-join=consul-0.consul.$(NAMESPACE).svc.cluster.local"
+            - "-retry-join=consul-1.consul.$(NAMESPACE).svc.cluster.local"
+            - "-retry-join=consul-2.consul.$(NAMESPACE).svc.cluster.local"
             - "-server"
             - "-ui"
-            - "-disable-host-node-id"
           volumeMounts:
             - name: config
               mountPath: /consul/conf.d
             - name: tls
               mountPath: /etc/tls
+            # enable below for persistent storage
+            # - name: data
+            #   mountPath: /consul/data
           lifecycle:
             preStop:
               exec:
@@ -82,6 +85,10 @@ spec:
         - name: config
           configMap:
             name: consul
+        # enable below for persistent storage
+        # - name: data
+        #   persistentVolumeClaim:
+        #     claimName: consul
         - name: tls
           secret:
             secretName: consul

@@ -1,0 +1,17 @@
+# this file is not used in the showcase, but is useful if
+# you're using this repository to deploy on aws
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: consul
+  labels:
+    app: consul
+spec:
+  accessModes:
+    - ReadWriteOnce
+  awsElasticBlockStore:
+    volumeID: <fill this in yourself>
+    fsType: ext4
+  capacity:
+    storage: 10Gi
