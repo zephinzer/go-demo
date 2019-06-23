@@ -15,13 +15,10 @@ If something's unclear/not right, feel free to [raise an issue](/zephinzer/go-de
 - [Cluster Initialisations](./init/README.md)
 - [Cloud Native Demo Tools](./tools/README.md)
 
-## Setting Up
+## Citations/Useful References
 
-Run `make` to create all necessary binaries and Docker images.
-
-Run `make ssl` to create the required certificates/keys to support HTTPS.
-
-Run `make showcase` to create the Docker Compose setup.
+- [Running Vault & Consul on Kubernetes](https://testdriven.io/blog/running-vault-and-consul-on-kubernetes/)
+- [Kubernetes API Reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.14/)
 
 # License
 Feel free to use these examples in your own workshops/tutorials!
