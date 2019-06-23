@@ -10,3 +10,4 @@ listener "tcp" {
 default_lease_ttl = "168h"
 log_level = "trace"
 max_lease_ttl = "720h"
+ui = true
