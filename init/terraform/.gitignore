@@ -1,0 +1,4 @@
+bin
+.version_info
+.version_latest
+Makefile.properties

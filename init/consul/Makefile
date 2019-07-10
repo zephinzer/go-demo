@@ -45,6 +45,8 @@ download:
 		&& chmod +x "./bin/$$(cat ./.version_latest)/consul$(BIN_EXT)"
 
 install:
+	# if the `mkdir` below fails, run it manually with `sudo` and run
+	# `chown $(whoami):$(whoami) /opt/consul before running `make install` again
 	@mkdir -p /opt/consul
 	@if ! [ -f "/opt/consul/consul-$$(cat ./.version_latest)$(BIN_EXT)" ]; then \
 		cp "./bin/$$(cat ./.version_latest)/consul$(BIN_EXT)" \
