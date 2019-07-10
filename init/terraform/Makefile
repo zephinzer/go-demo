@@ -14,7 +14,7 @@ Link: https://github.com/hashicorp/terraform
 
 endef
 
-# installs kustomize locally on the machine this recipe
+# installs terraform locally on the machine this recipe
 # is being run on
 tldr_install:
 	#
