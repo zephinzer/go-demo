@@ -2,10 +2,10 @@ include ../../scripts/Makefile
 
 define HELP_OUTPUT
 
-Packer by Hashicorp
-^^^^^^^^^^^^^^^^^^^
-Packer is a tool used to create machine images for use
-in cloud providers.
+Packer
+^^^^^^
+Packer is a tool for creating identical machine images
+for multiple platforms from a single source configuration.
 
 Link: https://github.com/hashicorp/packer
 
@@ -40,27 +40,28 @@ version_latest:
 
 download:
 	@mkdir -p ./bin/$$(cat ./.version_latest)
-	@curl -Lo "./bin/$$(cat ./.version_latest)/packer-$(SYS_OS)-$(SYS_ARCH)$(BIN_EXT)" \
+	@curl -Lo "./bin/$$(cat ./.version_latest)/packer-$(SYS_OS)-$(SYS_ARCH).zip" \
 		"https://releases.hashicorp.com/packer/$$(cat ./.version_latest)/packer_$$(cat ./.version_latest)_$(SYS_OS)_$(SYS_ARCH).zip"
-	@chmod +x "./bin/$$(cat ./.version_latest)/packer-$(SYS_OS)-$(SYS_ARCH)$(BIN_EXT)"
+	@unzip -d "./bin/$$(cat ./.version_latest)/" "./bin/$$(cat ./.version_latest)/packer-$(SYS_OS)-$(SYS_ARCH).zip" \
+		&& chmod +x "./bin/$$(cat ./.version_latest)/packer$(BIN_EXT)"
 
-# install:
-# 	@mkdir -p /opt/minikube
-# 	@if ! [ -f "/opt/minikube/minikube-$$(cat ./.version_latest)$(BIN_EXT)" ]; then \
-# 		cp "./bin/$$(cat ./.version_latest)/minikube-$(SYS_OS)-$(SYS_ARCH)$(BIN_EXT)" \
-# 			"/opt/minikube/minikube-$$(cat ./.version_latest)$(BIN_EXT)"; \
-# 	fi
-# 	@if [ -f "/usr/bin/minikube$(BIN_EXT)" ]; then \
-# 		ls -al "/usr/bin/minikube$(BIN_EXT)"; \
-# 		printf -- "it seems like '/usr/bin/minikube$(BIN_EXT)' already exists, remove it before retrying.\n"; \
-# 		exit 1; \
-# 	fi
-# 	@printf -- "requesting sudo access to create symlink at '/usr/bin/minikube$(BIN_EXT)'... "
-# 	@sudo ln -s \
-# 		"/opt/minikube/minikube-$$(cat ./.version_latest)$(BIN_EXT)" \
-# 		"/usr/bin/minikube$(BIN_EXT)"
+install:
+	@mkdir -p /opt/packer
+	@if ! [ -f "/opt/packer/packer-$$(cat ./.version_latest)$(BIN_EXT)" ]; then \
+		cp "./bin/$$(cat ./.version_latest)/packer$(BIN_EXT)" \
+			"/opt/packer/packer-$$(cat ./.version_latest)$(BIN_EXT)"; \
+	fi
+	@if [ -f "/usr/bin/packer$(BIN_EXT)" ]; then \
+		ls -al "/usr/bin/packer$(BIN_EXT)"; \
+		printf -- "it seems like '/usr/bin/packer$(BIN_EXT)' already exists, remove it before retrying.\n"; \
+		exit 1; \
+	fi
+	@printf -- "requesting sudo access to create symlink at '/usr/bin/packer$(BIN_EXT)'... "
+	@sudo ln -s \
+		"/opt/packer/packer-$$(cat ./.version_latest)$(BIN_EXT)" \
+		"/usr/bin/packer$(BIN_EXT)"
 
-# verify:
-# 	@minikube version
-# 	@ls -al $$(which minikube)
-# check: verify
+verify:
+	@packer version
+	@ls -al $$(which packer)
+check: verify
