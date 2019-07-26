@@ -172,14 +172,20 @@ helm_secure_init_do:
 _helm_secure_init:
 	@if kubectl get sa --all-namespaces | grep tiller; then \
 		helm init ${FLAGS} \
-			--history-max 500 \
-			--service-account=tiller \
-			--tiller-namespace=tiller \
 			--tiller-tls \
 			--tiller-tls-cert ./ssl/tiller.cert.pem \
 			--tiller-tls-key ./ssl/tiller.key.pem \
 			--tiller-tls-verify \
-			--tls-ca-cert ./ssl/ca.cert.pem; \
+			--tls-ca-cert ./ssl/ca.cert.pem \
+			--tiller-tls-hostname tiller \
+			--history-max 500 \
+			--override 'spec.template.spec.containers[0].command'='{/tiller,--storage=secret}' \
+			--upgrade \
+			--force-upgrade \
+			--wait \
+			--debug \
+			--service-account=tiller \
+			--tiller-namespace=tiller; \
 		printf -- "see:\n  https://github.com/helm/helm/blob/master/docs/tiller_ssl.md#configuring-the-helm-client\nfor more information on using the helm client\n\n"; \
 		printf -- "(eg. use 'helm version --tiller-namespace=tiller --tls --tls-ca-cert ./ssl/ca.cert.pem --tls-key ./ssl/helm.key.pem --tls-cert ./ssl/helm.cert.pem' to run the version command)"; \
 	else \

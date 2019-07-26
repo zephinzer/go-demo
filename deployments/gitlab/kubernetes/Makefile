@@ -1,16 +1,5 @@
 -include ../../../scripts/Makefile
 
-define HELP_OUTPUT
-
-GitLab on Kubernetes
-^^^^^^^^^^^^^^^^^^^^
-
-Run `make minikube` to create a new Minikube profile
-named `gitlab`.
-
-endef
-export HELP_OUTPUT
-
 minikube: check_prereq_minikube
 	@if ! minikube status --profile gitlab; then \
 		minikube start \
@@ -25,7 +14,8 @@ minikube: check_prereq_minikube
 	fi
 
 kubernetes:
-	@kubectl apply -f ./helm.yaml
+	@kubectl apply -f ./k8s-prereqs.yaml
 
-kubernetes_destroy:
-	@kubectl delete -f ./helm.yaml
+kubernetes_reset:
+	-@kubectl delete -f ./k8s-prereqs.yaml
+	$(MAKE) kubernetes

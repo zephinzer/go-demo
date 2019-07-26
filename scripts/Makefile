@@ -48,18 +48,16 @@ endif
 
 define HELP_OUTPUT
 
-Scripts
-^^^^^^^
+See README.md for more information!
 
-This directory contains utility scripts used in other places
-of the project.
+less ./README.md
 
 endef
 export HELP_OUTPUT
 
 # print the help message
 help_scripts:
-	@printf -- "$${HELP_OUTPUT}"
+	@echo "$${HELP_OUTPUT}"
 
 sys_info:
 	@printf -- "SYS_OS       : '$(SYS_OS)'\n"
